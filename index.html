@@ -52,8 +52,8 @@ body::before{
 h1{font-size:clamp(30px,5vw,48px);font-weight:700;letter-spacing:-.01em;margin:0 0 14px;line-height:1.12}
 h1 .g{background:linear-gradient(90deg,var(--phos),var(--scope));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
 .sub{color:var(--muted);font-size:clamp(15px,2.2vw,18px);max-width:620px;margin:0 auto 44px;line-height:1.7}
-.cards{display:grid;grid-template-columns:1fr 1fr;gap:22px;text-align:left}
-@media(max-width:720px){.cards{grid-template-columns:1fr}}
+.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;text-align:left}
+@media(max-width:860px){.cards{grid-template-columns:1fr}}
 .card{
   position:relative;display:flex;flex-direction:column;
   background:var(--panel);border:1px solid var(--line);border-radius:18px;
@@ -64,6 +64,7 @@ h1 .g{background:linear-gradient(90deg,var(--phos),var(--scope));-webkit-backgro
 .card:hover{transform:translateY(-4px);border-color:var(--accent);box-shadow:0 18px 40px -18px var(--accent)}
 .card.scope{--accent:var(--scope)}
 .card.flh{--accent:var(--flh)}
+.card.flash{--accent:#C9810F}
 .ic{font-size:34px;line-height:1;margin-bottom:18px}
 .tag{font-family:var(--mono);font-size:11.5px;letter-spacing:1.5px;text-transform:uppercase;color:var(--accent);margin-bottom:9px}
 .card h2{font-family:var(--disp);font-size:23px;font-weight:600;margin:0 0 4px}
@@ -97,6 +98,15 @@ h1 .g{background:linear-gradient(90deg,var(--phos),var(--scope));-webkit-backgro
       <h2>FLH Interface</h2>
       <div class="en">FLH Device Engineering 養成手冊</div>
       <p>從新人到 Senior:頻寬世界、Toggle / ONFI 介面、Read / Program / Erase、interleave 與 IO timing margin、FA 方法論。</p>
+      <span class="go">進入 <span class="arr">→</span></span>
+    </a>
+
+    <a class="card flash" href="flash.html">
+      <div class="ic">💾</div>
+      <div class="tag">NAND Flash · Device Physics</div>
+      <h2>NAND Flash 元件養成</h2>
+      <div class="en">元件養成手冊 · 新人 → Senior</div>
+      <p>從 array 架構與 cell 物理,連到 Vth distribution 與 yield:NAND vs NOR、Erase / Program / Read、2D vs 3D、可靠度,附 50 題題庫。</p>
       <span class="go">進入 <span class="arr">→</span></span>
     </a>
   </div>

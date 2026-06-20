@@ -1,0 +1,1053 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NAND Flash 元件養成手冊 · 新人 → Senior</title>
+<style>
+  :root{
+    --paper:#eceff1; --surface:#ffffff; --surface2:#f6f8f9;
+    --ink:#15242c; --ink2:#2b3c44; --muted:#5d6e76; --faint:#8a979d;
+    --line:#d6dee1; --line2:#e6ecee;
+    --teal:#0d7d7d; --teal-d:#095e5e; --teal-tint:#e6f3f2;
+    --amber:#bf5f12; --amber-d:#8f470c; --amber-tint:#fbf0e2;
+    --violet:#5a4a90; --violet-tint:#efecf7;
+    --danger:#b03426; --danger-tint:#fbeae8;
+    --mono:ui-monospace,"SF Mono","Cascadia Code","JetBrains Mono",Consolas,"Roboto Mono",monospace;
+    --sans:"Segoe UI",system-ui,-apple-system,"Helvetica Neue",Arial,"PingFang TC","Microsoft JhengHei","Noto Sans TC",sans-serif;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+  body{
+    margin:0;background:var(--paper);color:var(--ink);
+    font-family:var(--sans);line-height:1.7;font-size:16.5px;
+    -webkit-font-smoothing:antialiased;
+  }
+  a{color:var(--teal-d);text-decoration:none}
+  a:hover{text-decoration:underline}
+  code,.mono{font-family:var(--mono)}
+
+  /* ---- top bar ---- */
+  .topbar{
+    position:sticky;top:0;z-index:50;display:flex;align-items:center;gap:16px;
+    padding:10px 22px;background:rgba(21,36,44,.96);color:#dfe8ea;
+    border-bottom:1px solid #0b1418;backdrop-filter:blur(6px);
+  }
+  .topbar .home{
+    display:inline-flex;align-items:center;gap:7px;font-family:var(--mono);
+    font-size:13px;color:#9fd6d2;border:1px solid #2c4a4a;border-radius:6px;
+    padding:6px 11px;background:#11302f;transition:background .15s,border-color .15s;
+  }
+  .topbar .home:hover{background:#164240;border-color:#3f6b6b;text-decoration:none}
+  .topbar .crumb{font-family:var(--mono);font-size:12.5px;color:#7f9097;letter-spacing:.02em}
+  .topbar .crumb b{color:#cfe0e2;font-weight:600}
+  .topbar .spacer{flex:1}
+  .topbar .tag{font-family:var(--mono);font-size:11px;color:#84d4cd;border:1px solid #2c4a4a;border-radius:20px;padding:3px 10px}
+  @media(max-width:680px){.topbar .crumb,.topbar .tag{display:none}}
+
+  /* ---- hero ---- */
+  .hero{background:linear-gradient(170deg,#15242c 0%,#193038 55%,#13262b 100%);color:#e9f1f2;padding:54px 22px 40px;border-bottom:3px solid var(--teal)}
+  .hero-in{max-width:1080px;margin:0 auto}
+  .eyebrow{font-family:var(--mono);font-size:12.5px;letter-spacing:.18em;color:#7fd8d0;text-transform:uppercase;margin:0 0 12px}
+  .hero h1{font-size:clamp(30px,5vw,50px);line-height:1.08;margin:0 0 14px;font-weight:800;letter-spacing:-.01em}
+  .hero h1 .accent{color:#46c3bb}
+  .hero .lead{font-size:clamp(16px,2.2vw,19px);color:#bcccce;max-width:680px;margin:0 0 26px}
+  .specsheet{display:flex;flex-wrap:wrap;gap:0;border:1px solid #2d4750;border-radius:10px;overflow:hidden;background:#11242a;max-width:760px}
+  .specsheet div{flex:1 1 130px;padding:14px 16px;border-right:1px solid #233a41}
+  .specsheet div:last-child{border-right:none}
+  .specsheet .n{font-family:var(--mono);font-size:26px;color:#5ccabf;font-weight:700;line-height:1}
+  .specsheet .l{font-size:12.5px;color:#90a4a8;margin-top:6px}
+  .hero-fig{margin-top:30px;background:#0f2025;border:1px solid #294149;border-radius:12px;padding:18px 16px 8px}
+  .hero-fig .cap{font-family:var(--mono);font-size:12px;color:#86a0a4;margin:6px 4px 4px}
+
+  /* ---- layout ---- */
+  .wrap{max-width:1080px;margin:0 auto;padding:0 22px;display:grid;grid-template-columns:228px 1fr;gap:38px;align-items:start}
+  @media(max-width:900px){.wrap{display:block;padding:0 18px}}
+  nav.toc{position:sticky;top:62px;padding:26px 0;max-height:calc(100vh - 62px);overflow:auto}
+  nav.toc .t{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--faint);margin:0 0 10px;padding-left:12px}
+  nav.toc ol{list-style:none;margin:0;padding:0;counter-reset:c}
+  nav.toc li{counter-increment:c}
+  nav.toc a{display:block;padding:7px 12px 7px 12px;font-size:14px;color:var(--ink2);border-left:2px solid var(--line);position:relative}
+  nav.toc a::before{content:counter(c,decimal-leading-zero);font-family:var(--mono);font-size:11px;color:var(--faint);margin-right:9px}
+  nav.toc a:hover{color:var(--teal-d);border-left-color:var(--teal);text-decoration:none;background:var(--teal-tint)}
+  nav.toc a.active{color:var(--teal-d);border-left-color:var(--teal);background:var(--teal-tint);font-weight:600}
+  @media(max-width:900px){nav.toc{display:none}}
+
+  main{padding:30px 0 80px;min-width:0}
+  section{margin:0 0 56px;scroll-margin-top:72px}
+  .sec-head{display:flex;align-items:baseline;gap:14px;border-bottom:2px solid var(--ink);padding-bottom:10px;margin-bottom:22px}
+  .sec-head .num{font-family:var(--mono);font-size:14px;color:var(--teal);font-weight:700}
+  .sec-head h2{font-size:clamp(22px,3.2vw,30px);margin:0;font-weight:800;letter-spacing:-.01em}
+  h3{font-size:19px;margin:30px 0 10px;font-weight:700;color:var(--ink)}
+  h4{font-size:15.5px;margin:20px 0 6px;font-weight:700;color:var(--ink2);font-family:var(--mono)}
+  p{margin:0 0 14px}
+  .muted{color:var(--muted)}
+  ul,ol{margin:0 0 14px;padding-left:22px}
+  li{margin:5px 0}
+  strong{font-weight:700}
+  .term{font-family:var(--mono);font-size:.93em;background:var(--surface2);border:1px solid var(--line2);border-radius:4px;padding:1px 5px;color:var(--ink2)}
+
+  /* ---- figure / svg ---- */
+  figure{margin:22px 0;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:18px 18px 10px;overflow:hidden}
+  figure svg{display:block;width:100%;height:auto}
+  figcaption{font-size:13px;color:var(--muted);margin-top:10px;border-top:1px dashed var(--line);padding-top:8px}
+  figcaption b{color:var(--ink2)}
+
+  /* ---- callouts ---- */
+  .callout{border-radius:10px;padding:14px 16px 14px 18px;margin:18px 0;border:1px solid;border-left-width:4px;font-size:15px}
+  .callout .h{font-family:var(--mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;font-weight:700;margin-bottom:6px;display:flex;align-items:center;gap:7px}
+  .callout p:last-child{margin-bottom:0}
+  .c-senior{background:var(--teal-tint);border-color:#aed6d2;color:#0c3b3a}
+  .c-senior .h{color:var(--teal-d)}
+  .c-pitfall{background:var(--amber-tint);border-color:#e8c79e;color:#6b3a0c}
+  .c-pitfall .h{color:var(--amber-d)}
+  .c-physics{background:var(--violet-tint);border-color:#cfc6ea;color:#352a5e}
+  .c-physics .h{color:var(--violet)}
+  .c-danger{background:var(--danger-tint);border-color:#e6b0a9;color:#7a221a}
+  .c-danger .h{color:var(--danger)}
+
+  /* ---- tables ---- */
+  .tbl-scroll{overflow-x:auto;margin:18px 0;border:1px solid var(--line);border-radius:10px}
+  table{border-collapse:collapse;width:100%;font-size:14.5px;min-width:560px}
+  th,td{text-align:left;padding:10px 13px;border-bottom:1px solid var(--line2);vertical-align:top}
+  thead th{background:var(--surface2);font-family:var(--mono);font-size:12.5px;letter-spacing:.03em;color:var(--ink2);border-bottom:2px solid var(--line);position:sticky;top:0}
+  tbody tr:last-child td{border-bottom:none}
+  tbody tr:nth-child(even){background:var(--surface2)}
+  td .pro{color:var(--teal-d)} td .con{color:var(--danger)}
+  caption{caption-side:top;text-align:left;font-size:13px;color:var(--muted);padding:0 0 8px;font-family:var(--mono)}
+
+  /* ---- quiz ---- */
+  .quiz{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:0;overflow:hidden}
+  .quiz-head{background:linear-gradient(120deg,#15242c,#1c3640);color:#e9f1f2;padding:22px 22px}
+  .quiz-head h3{color:#fff;margin:0 0 6px;font-size:21px}
+  .quiz-head p{color:#aebec1;margin:0;font-size:14px}
+  .quiz-bar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;padding:16px 22px;border-bottom:1px solid var(--line);background:var(--surface2)}
+  .btn{font-family:var(--sans);font-size:14.5px;font-weight:600;border-radius:8px;padding:10px 18px;cursor:pointer;border:1px solid transparent;transition:background .15s,border-color .15s,transform .05s}
+  .btn:active{transform:translateY(1px)}
+  .btn-primary{background:var(--teal);color:#fff}
+  .btn-primary:hover{background:var(--teal-d)}
+  .btn-ghost{background:transparent;color:var(--teal-d);border-color:var(--line)}
+  .btn-ghost:hover{border-color:var(--teal);background:var(--teal-tint)}
+  .btn[disabled]{opacity:.45;cursor:not-allowed}
+  .quiz-meta{font-family:var(--mono);font-size:13px;color:var(--muted);margin-left:auto}
+  #quizBody{padding:10px 22px 22px}
+  .q-card{border:1px solid var(--line);border-radius:10px;padding:16px 18px;margin:16px 0;background:var(--surface)}
+  .q-num{font-family:var(--mono);font-size:12px;color:var(--teal);font-weight:700}
+  .q-cat{font-family:var(--mono);font-size:11px;color:var(--faint);float:right;border:1px solid var(--line);border-radius:20px;padding:2px 9px}
+  .q-text{font-weight:600;margin:8px 0 12px;font-size:16px}
+  .opt{display:block;border:1px solid var(--line);border-radius:8px;padding:10px 14px;margin:7px 0;cursor:pointer;transition:border-color .12s,background .12s;font-size:15px}
+  .opt:hover{border-color:var(--teal);background:var(--teal-tint)}
+  .opt input{margin-right:10px;accent-color:var(--teal)}
+  .opt.sel{border-color:var(--teal);background:var(--teal-tint)}
+  .opt.correct{border-color:var(--teal);background:var(--teal-tint)}
+  .opt.correct::after{content:" ✓ 正解";font-family:var(--mono);font-size:12px;color:var(--teal-d);font-weight:700}
+  .opt.wrong{border-color:var(--danger);background:var(--danger-tint)}
+  .opt.wrong::after{content:" ✗ 你選的";font-family:var(--mono);font-size:12px;color:var(--danger);font-weight:700}
+  .opt.locked{cursor:default;pointer-events:none}
+  .explain{margin-top:12px;border-top:1px dashed var(--line);padding-top:10px;font-size:14.5px;color:var(--ink2);display:none}
+  .explain.show{display:block}
+  .explain .h{font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--amber-d);font-weight:700;margin-bottom:5px}
+  .scorecard{margin:18px 0 6px;border:2px solid var(--teal);border-radius:12px;padding:18px 20px;background:var(--teal-tint);display:none}
+  .scorecard.show{display:block}
+  .scorecard .big{font-family:var(--mono);font-size:34px;font-weight:800;color:var(--teal-d);line-height:1}
+  .scorecard .lab{font-size:14px;color:var(--ink2);margin-top:6px}
+
+  footer{border-top:1px solid var(--line);padding:26px 22px 60px;text-align:center;color:var(--muted);font-size:13px}
+  footer .mono{display:block;margin-top:6px;color:var(--faint);font-size:12px}
+  .keyline{height:1px;background:var(--line);margin:0}
+  :focus-visible{outline:2px solid var(--teal);outline-offset:2px;border-radius:4px}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <a class="home" href="index.html">← 回到入口</a>
+  <span class="crumb">Engineering Academy / <b>NAND Flash 元件養成</b></span>
+  <span class="spacer"></span>
+  <span class="tag">Beginner → Senior</span>
+</div>
+
+<header class="hero">
+  <div class="hero-in">
+    <p class="eyebrow">Theme 03 · Flash Application & Device Physics</p>
+    <h1>NAND Flash <span class="accent">元件養成手冊</span></h1>
+    <p class="lead">從「小白」到能做 root-cause analysis 的 senior flash engineer：先建立 array 架構與 cell 物理直覺，再連到 Vth distribution 與 yield 後果。機制優先、刻意點名反直覺細節。</p>
+    <div class="specsheet">
+      <div><div class="n">2</div><div class="l">NAND vs NOR 架構</div></div>
+      <div><div class="n">6</div><div class="l">應用介面剖析</div></div>
+      <div><div class="n">3</div><div class="l">Erase / Pgm / Read</div></div>
+      <div><div class="n">50</div><div class="l">題庫 · 隨機抽 10 考</div></div>
+    </div>
+    <figure class="hero-fig" style="border:none;background:transparent;padding:8px 0 0">
+      <svg viewBox="0 0 760 210" role="img" aria-label="TLC Vth distribution 示意"><text x="30" y="22" fill="#7fd8d0" font-family="ui-monospace,monospace" font-size="12"># cells (log)</text><g stroke="#5f7c82" stroke-width="1" stroke-dasharray="3 4"><line x1="122.5" y1="40" x2="122.5" y2="150"/><line x1="207.5" y1="40" x2="207.5" y2="150"/><line x1="292.5" y1="40" x2="292.5" y2="150"/><line x1="377.5" y1="40" x2="377.5" y2="150"/><line x1="462.5" y1="40" x2="462.5" y2="150"/><line x1="547.5" y1="40" x2="547.5" y2="150"/><line x1="632.5" y1="40" x2="632.5" y2="150"/></g><path d="M48,150 C62,150 64,34 80,34 C96,34 98,150 112,150 Z" fill="#46c3bb" fill-opacity="0.18" stroke="#46c3bb" stroke-width="1.6"/><path d="M133,150 C147,150 149,54 165,54 C181,54 183,150 197,150 Z" fill="#5ccabf" fill-opacity="0.18" stroke="#5ccabf" stroke-width="1.6"/><path d="M218,150 C232,150 234,49 250,49 C266,49 268,150 282,150 Z" fill="#d6913f" fill-opacity="0.18" stroke="#d6913f" stroke-width="1.6"/><path d="M303,150 C317,150 319,57 335,57 C351,57 353,150 367,150 Z" fill="#d6913f" fill-opacity="0.18" stroke="#d6913f" stroke-width="1.6"/><path d="M388,150 C402,150 404,51 420,51 C436,51 438,150 452,150 Z" fill="#8a7ec4" fill-opacity="0.18" stroke="#8a7ec4" stroke-width="1.6"/><path d="M473,150 C487,150 489,59 505,59 C521,59 523,150 537,150 Z" fill="#8a7ec4" fill-opacity="0.18" stroke="#8a7ec4" stroke-width="1.6"/><path d="M558,150 C572,150 574,53 590,53 C606,53 608,150 622,150 Z" fill="#46c3bb" fill-opacity="0.18" stroke="#46c3bb" stroke-width="1.6"/><path d="M643,150 C657,150 659,61 675,61 C691,61 693,150 707,150 Z" fill="#d6913f" fill-opacity="0.18" stroke="#d6913f" stroke-width="1.6"/><line x1="30" y1="150" x2="725" y2="150" stroke="#3a565d" stroke-width="1.4"/><text x="700" y="170" fill="#86a0a4" font-family="ui-monospace,monospace" font-size="13">Vth →</text><g fill="#bcccce" font-family="ui-monospace,monospace" font-size="13" text-anchor="middle"><text x="80" y="178">Er</text><text x="165" y="178">A</text><text x="250" y="178">B</text><text x="335" y="178">C</text><text x="420" y="178">D</text><text x="505" y="178">E</text><text x="590" y="178">F</text><text x="675" y="178">G</text></g></svg>
+      <p class="cap">TLC 8 個 state 的 Vth distribution 與 7 條 read reference。本手冊的所有 cell 行為，最終都回到「這張圖的形狀與位置」。</p>
+    </figure>
+  </div>
+</header>
+
+<div class="wrap">
+  <nav class="toc" aria-label="目錄">
+    <p class="t">章節 Contents</p>
+    <ol>
+      <li><a href="#c1">NAND vs NOR 架構差異</a></li>
+      <li><a href="#c2">Flash 應用介面剖析</a></li>
+      <li><a href="#c3">Erase / Program / Read 原理</a></li>
+      <li><a href="#c4">Reliability Issues</a></li>
+      <li><a href="#c5">2D vs 3D NAND</a></li>
+      <li><a href="#c6">Charge Trap vs Floating Gate</a></li>
+      <li><a href="#c7">3D Flash 製程簡介</a></li>
+      <li><a href="#c8">知識驗收 · 50 題題庫</a></li>
+    </ol>
+  </nav>
+
+  <main>
+
+  <!-- ============ 0 導論 ============ -->
+  <section id="intro">
+    <p class="muted" style="font-size:15px">這份手冊的設計原則：<strong>先機制、再現象、最後連到 yield</strong>。每一章除了基本知識，會用 <span class="term">Senior 觀點</span> 點出資深工程師才會注意的細節，用 <span class="term">易錯陷阱</span> 標出新人最常 pattern-match 出錯的地方。讀完八章、通過題庫，你應該能對一筆 FA 案例提出「物理上說得通」的 root cause 假設，而不只是描述現象。</p>
+  </section>
+
+  <!-- ============ 1 NAND vs NOR ============ -->
+  <section id="c1">
+    <div class="sec-head"><span class="num">01</span><h2>NAND vs NOR：兩種 array 的根本取捨</h2></div>
+
+    <p>Flash 的所有 cell 都是「可儲存電荷的 MOSFET」，差別在 <strong>array 怎麼接線</strong>。這個接線方式決定了存取速度、cell 面積、成本，進而決定它適合做 code storage 還是 mass data storage。</p>
+
+    <figure>
+      <svg viewBox="0 0 720 300" role="img" aria-label="NOR 並聯 array 與 NAND 串聯 string 比較">
+        <!-- NOR side -->
+        <text x="20" y="26" font-family="ui-monospace,monospace" font-size="15" font-weight="700" fill="#0d7d7d">NOR — 並聯 (parallel)</text>
+        <g stroke="#15242c" stroke-width="1.6" fill="none">
+          <!-- two bitlines -->
+          <line x1="70" y1="50" x2="70" y2="250"/><line x1="170" y1="50" x2="170" y2="250"/>
+          <!-- source line -->
+          <line x1="40" y1="265" x2="220" y2="265" stroke="#bf5f12"/>
+        </g>
+        <!-- cells: each connects BL to SL directly -->
+        <g>
+          <rect x="55" y="90" width="30" height="20" fill="#e6f3f2" stroke="#0d7d7d"/>
+          <rect x="155" y="90" width="30" height="20" fill="#e6f3f2" stroke="#0d7d7d"/>
+          <rect x="55" y="170" width="30" height="20" fill="#e6f3f2" stroke="#0d7d7d"/>
+          <rect x="155" y="170" width="30" height="20" fill="#e6f3f2" stroke="#0d7d7d"/>
+          <line x1="70" y1="50" x2="70" y2="90" stroke="#15242c"/><line x1="70" y1="110" x2="70" y2="265" stroke="#15242c"/>
+          <line x1="170" y1="50" x2="170" y2="90" stroke="#15242c"/><line x1="170" y1="110" x2="170" y2="265" stroke="#15242c"/>
+          <line x1="70" y1="170" x2="70" y2="190" stroke="#15242c"/><line x1="170" y1="170" x2="170" y2="190" stroke="#15242c"/>
+        </g>
+        <!-- WL -->
+        <g stroke="#5a4a90" stroke-width="1.4">
+          <line x1="30" y1="100" x2="55" y2="100"/><line x1="185" y1="100" x2="210" y2="100"/>
+          <line x1="30" y1="180" x2="55" y2="180"/><line x1="185" y1="180" x2="210" y2="180"/>
+        </g>
+        <text x="20" y="288" font-family="ui-monospace,monospace" font-size="12" fill="#5d6e76">每 cell 直接接 BL → random read 快、cell 大 (~10 F²)</text>
+
+        <!-- divider -->
+        <line x1="360" y1="40" x2="360" y2="270" stroke="#d6dee1" stroke-dasharray="4 4"/>
+
+        <!-- NAND side -->
+        <text x="420" y="26" font-family="ui-monospace,monospace" font-size="15" font-weight="700" fill="#bf5f12">NAND — 串聯 (series string)</text>
+        <g stroke="#15242c" stroke-width="1.6">
+          <line x1="500" y1="46" x2="500" y2="60"/><!-- BL -->
+        </g>
+        <text x="470" y="44" font-family="ui-monospace,monospace" font-size="11" fill="#5d6e76">BL</text>
+        <!-- string: SGD - cells - SGS -->
+        <g>
+          <rect x="480" y="60" width="40" height="18" fill="#fbf0e2" stroke="#bf5f12"/><text x="540" y="73" font-family="ui-monospace,monospace" font-size="10" fill="#5d6e76">SGD</text>
+          <rect x="480" y="90" width="40" height="18" fill="#e6f3f2" stroke="#0d7d7d"/><text x="540" y="103" font-family="ui-monospace,monospace" font-size="10" fill="#5d6e76">WL0</text>
+          <rect x="480" y="120" width="40" height="18" fill="#e6f3f2" stroke="#0d7d7d"/><text x="540" y="133" font-family="ui-monospace,monospace" font-size="10" fill="#5d6e76">WL1</text>
+          <rect x="480" y="150" width="40" height="18" fill="#e6f3f2" stroke="#0d7d7d"/><text x="540" y="163" font-family="ui-monospace,monospace" font-size="10" fill="#5d6e76">···</text>
+          <rect x="480" y="180" width="40" height="18" fill="#e6f3f2" stroke="#0d7d7d"/><text x="540" y="193" font-family="ui-monospace,monospace" font-size="10" fill="#5d6e76">WLn</text>
+          <rect x="480" y="210" width="40" height="18" fill="#fbf0e2" stroke="#bf5f12"/><text x="540" y="223" font-family="ui-monospace,monospace" font-size="10" fill="#5d6e76">SGS</text>
+          <line x1="500" y1="78" x2="500" y2="90" stroke="#15242c"/><line x1="500" y1="108" x2="500" y2="120" stroke="#15242c"/>
+          <line x1="500" y1="138" x2="500" y2="150" stroke="#15242c"/><line x1="500" y1="168" x2="500" y2="180" stroke="#15242c"/>
+          <line x1="500" y1="198" x2="500" y2="210" stroke="#15242c"/>
+          <line x1="500" y1="228" x2="500" y2="245" stroke="#15242c"/>
+          <line x1="470" y1="245" x2="530" y2="245" stroke="#bf5f12" stroke-width="1.6"/>
+        </g>
+        <text x="446" y="262" font-family="ui-monospace,monospace" font-size="11" fill="#5d6e76">SL</text>
+        <text x="420" y="288" font-family="ui-monospace,monospace" font-size="12" fill="#5d6e76">16~ cells 共用 2 個接觸 → cell 小 (~4 F²)、成本低</text>
+      </svg>
+      <figcaption><b>圖 1.1</b> NOR 每個 cell 都有自己通往 BL 的接觸，可直接定址 → random access 快；NAND 把數十個 cell 串成一條 string、只在頭尾各放一個 select gate，犧牲隨機存取換取極小的 effective cell size。</figcaption>
+    </figure>
+
+    <div class="tbl-scroll">
+    <table>
+      <caption>表 1.1 · NAND vs NOR 特性對照</caption>
+      <thead><tr><th>面向</th><th>NOR Flash</th><th>NAND Flash</th></tr></thead>
+      <tbody>
+        <tr><td>Array 結構</td><td>並聯，cell 直接接 BL</td><td>串聯成 string，共用接觸</td></tr>
+        <tr><td>Cell size</td><td class="con">大 (~10 F²)</td><td class="pro">小 (~4 F²)</td></tr>
+        <tr><td>Random read</td><td class="pro">快 (~60–120 ns)</td><td class="con">慢 (~10–50 µs / page)</td></tr>
+        <tr><td>Sequential write</td><td class="con">慢 (byte/word)</td><td class="pro">快 (page，數 KB 同時寫)</td></tr>
+        <tr><td>定址單位</td><td>byte / word，可隨機讀</td><td>page 讀寫、block 抹除</td></tr>
+        <tr><td>XIP (code 就地執行)</td><td class="pro">可，適合 code storage</td><td class="con">不適合，需先載入 RAM</td></tr>
+        <tr><td>成本 / bit</td><td class="con">高</td><td class="pro">最低（半導體記憶體中）</td></tr>
+        <tr><td>典型用途</td><td>BIOS / firmware / MCU code</td><td>USB、SD、SSD、eMMC/UFS mass storage</td></tr>
+      </tbody>
+    </table>
+    </div>
+
+    <div class="callout c-senior">
+      <div class="h">◆ Senior 觀點</div>
+      <p>NAND「不能 XIP」不是缺點而是設計取捨的結果：串聯使單一 cell 無法被獨立量測電流，必須整條 string 導通才讀得到目標 cell。這也是為什麼 NAND read 一定要對 unselected WL 加 <span class="term">Vpass</span> 把它們「無條件導通」——這個 Vpass 正是後面 read disturb 的源頭。架構上的取捨，會一路傳遞到 reliability。</p>
+    </div>
+  </section>
+
+  <!-- ============ 2 應用介面 ============ -->
+  <section id="c2">
+    <div class="sec-head"><span class="num">02</span><h2>Flash 應用介面：從 USB 到 PCIe SSD</h2></div>
+    <p>同樣的 NAND die，套上不同的 controller 與 host 介面，就變成不同產品。介面演進的主軸是<strong>頻寬</strong>與<strong>協定複雜度</strong>：從 USB / SD 的可移除消費級，到 eMMC / UFS 的嵌入式，再到 SATA / PCIe 的儲存級。</p>
+
+    <div class="tbl-scroll">
+    <table>
+      <caption>表 2.1 · 六大 Flash 應用介面比較</caption>
+      <thead><tr><th>介面</th><th>定位 / 形態</th><th>頻寬等級</th><th class="pro">優點</th><th class="con">缺點</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><strong>USB Flash</strong></td><td>可移除隨身碟</td><td>USB 2.0 ~480 Mb/s；3.x 可達數 Gb/s</td>
+          <td class="pro">即插即用、通用、便宜</td><td class="con">效能與壽命管理弱、controller 簡單、隨機效能差</td>
+        </tr>
+        <tr>
+          <td><strong>SD / microSD</strong></td><td>可移除卡（相機、手機）</td><td>UHS-I ~104 MB/s；UHS-II / Express 更高</td>
+          <td class="pro">標準化、體積小、生態成熟</td><td class="con">耐久度 / 隨機 IOPS 受限、卡務等級差異大</td>
+        </tr>
+        <tr>
+          <td><strong>eMMC</strong></td><td>嵌入式封裝（BGA 焊在板上）</td><td>HS400 ~400 MB/s</td>
+          <td class="pro">整合 controller、低成本嵌入式、省空間</td><td class="con">並列匯流排、頻寬天花板低、半雙工</td>
+        </tr>
+        <tr>
+          <td><strong>UFS</strong></td><td>嵌入式（取代 eMMC）</td><td>UFS 3.1 ~2.1 GB/s（雙 lane）</td>
+          <td class="pro">序列差動、全雙工、支援 command queue、低延遲</td><td class="con">成本較 eMMC 高、設計複雜</td>
+        </tr>
+        <tr>
+          <td><strong>SATA SSD</strong></td><td>2.5"/M.2 用 AHCI</td><td>SATA III ~600 MB/s（飽和）</td>
+          <td class="pro">相容 HDD 介面、好換裝、成熟穩定</td><td class="con">頻寬已被介面卡死、AHCI 單佇列、延遲高</td>
+        </tr>
+        <tr>
+          <td><strong>PCIe / NVMe SSD</strong></td><td>M.2 / U.2 / add-in card</td><td>Gen4 x4 ~7 GB/s；Gen5 更高</td>
+          <td class="pro">直連 PCIe、NVMe 多佇列 (64K queues)、極低延遲、高 IOPS</td><td class="con">功耗 / 發熱高、成本高、需散熱設計</td>
+        </tr>
+      </tbody>
+    </table>
+    </div>
+
+    <div class="callout c-physics">
+      <div class="h">▣ 機制：為什麼介面一直往「序列差動 + 多佇列」走</div>
+      <p>並列匯流排（eMMC、傳統 NAND async）在高頻下受 skew 與訊號完整性限制，頻寬難拉高；UFS / PCIe 改用<strong>序列差動點對點</strong>，並用 <strong>command queue</strong> 讓多個 outstanding command 並行，才能餵飽底層多 plane / 多 die 的平行度。換句話說：介面的演進，是為了把 NAND 內部本來就存在的平行度釋放出來。</p>
+    </div>
+    <div class="callout c-senior">
+      <div class="h">◆ Senior 觀點</div>
+      <p>同一顆 die 在不同產品的「實際壽命」差很多，因為 controller 的 <span class="term">FTL</span>（wear leveling、GC、over-provisioning、ECC/LDPC 強度）不同。做 FA 時若只看 die 而忽略 controller 策略，會把「系統層 write amplification 造成的早夭」誤判成「cell 本質 endurance 不足」。</p>
+    </div>
+  </section>
+
+  <!-- ============ 3 操作原理 ============ -->
+  <section id="c3">
+    <div class="sec-head"><span class="num">03</span><h2>三大操作：Erase / Program / Read</h2></div>
+    <p>NAND 的三個動作都靠<strong>調整 cell 內儲存電荷量</strong>來改變 threshold voltage（Vth）。記住一條總綱：<strong>抹除把電荷拉走（Vth 降）、寫入把電子打進去（Vth 升）、讀取則是在 Vth 軸上量它落在哪一邊</strong>。</p>
+
+    <figure>
+      <svg viewBox="0 0 760 300" role="img" aria-label="3D NAND 的 Erase / Program / Read 偏壓"><text x="14" y="22" font-family="ui-monospace,monospace" font-size="14" font-weight="700" fill="#bf5f12">ERASE</text><text x="14" y="37" font-family="ui-monospace,monospace" font-size="10.5" fill="#5d6e76">block 單位 · GIDL / Body</text><g transform="translate(14,48)"><text x="9.0" y="2" font-family="ui-monospace,monospace" font-size="10" fill="#5d6e76">BL ~20V</text><line x1="35.0" y1="6" x2="35.0" y2="14" stroke="#bf5f12" stroke-width="1.5"/><polygon points="6,17 14,9 72,9 64,17" fill="#fbeed8" stroke="#bf5f12" stroke-width="1"/><polygon points="64,17 72,9 72,23 64,31" fill="#f3d6b0" stroke="#bf5f12" stroke-width="1"/><rect x="6" y="17" width="58" height="14" fill="#f3d6b0" stroke="#bf5f12" stroke-width="1.2"/><polygon points="6,51 14,43 72,43 64,51" fill="#e6f3f2" stroke="#0d7d7d" stroke-width="1"/><polygon points="64,51 72,43 72,57 64,65" fill="#cfe7e4" stroke="#0d7d7d" stroke-width="1"/><rect x="6" y="51" width="58" height="14" fill="#cfe7e4" stroke="#0d7d7d" stroke-width="1.2"/><polygon points="6,85 14,77 72,77 64,85" fill="#e6f3f2" stroke="#0d7d7d" stroke-width="1"/><polygon points="64,85 72,77 72,91 64,99" fill="#cfe7e4" stroke="#0d7d7d" stroke-width="1"/><rect x="6" y="85" width="58" height="14" fill="#cfe7e4" stroke="#0d7d7d" stroke-width="1.2"/><polygon points="6,119 14,111 72,111 64,119" fill="#e6f3f2" stroke="#0d7d7d" stroke-width="1"/><polygon points="64,119 72,111 72,125 64,133" fill="#cfe7e4" stroke="#0d7d7d" stroke-width="1"/><rect x="6" y="119" width="58" height="14" fill="#cfe7e4" stroke="#0d7d7d" stroke-width="1.2"/><polygon points="6,153 14,145 72,145 64,153" fill="#fbeed8" stroke="#bf5f12" stroke-width="1"/><polygon points="64,153 72,145 72,159 64,167" fill="#f3d6b0" stroke="#bf5f12" stroke-width="1"/><rect x="6" y="153" width="58" height="14" fill="#f3d6b0" stroke="#bf5f12" stroke-width="1.2"/><rect x="27.0" y="12" width="16" height="164" rx="3" fill="#f0b878" stroke="#bf5f12" stroke-width="1.3"/><rect x="29.5" y="15" width="3" height="158" rx="1.5" fill="#fbe7cf"/><ellipse cx="35.0" cy="12" rx="8.0" ry="3.2" fill="#fbe0c4" stroke="#bf5f12" stroke-width="1"/><rect x="13.0" y="176" width="44" height="5" rx="2" fill="#bf5f12"/><text x="13.0" y="194" font-family="ui-monospace,monospace" font-size="10" fill="#5d6e76">Source ~20V</text><text x="78" y="28" font-family="ui-monospace,monospace" font-size="10.5" fill="#2b3c44">SGD ~15V</text><text x="78" y="62" font-family="ui-monospace,monospace" font-size="10.5" fill="#2b3c44">WL 0V</text><text x="78" y="96" font-family="ui-monospace,monospace" font-size="10.5" fill="#2b3c44">WL 0V</text><text x="78" y="130" font-family="ui-monospace,monospace" font-size="10.5" fill="#2b3c44">WL 0V</text><text x="78" y="164" font-family="ui-monospace,monospace" font-size="10.5" fill="#2b3c44">SGS ~15V</text><text x="47.0" y="90" font-family="ui-monospace,monospace" font-size="12" fill="#bf5f12" font-weight="700">body↑</text><text x="0" y="205" font-family="ui-monospace,monospace" font-size="10" fill="#5d6e76">GIDL：junction 生 e–h pair，holes 灌入</text><text x="0" y="220" font-family="ui-monospace,monospace" font-size="10" fill="#5d6e76">channel→body 抬到 ~20V；WL=0V 強場</text><text x="0" y="235" font-family="ui-monospace,monospace" font-size="10" fill="#5d6e76">把電子 FN 拉出 → 全 block Vth↓</text></g><line x1="254" y1="44" x2="254" y2="245" stroke="#e6ecee"/><text x="266" y="22" font-family="ui-monospace,monospace" font-size="14" font-weight="700" fill="#0d7d7d">PROGRAM</text><text x="266" y="37" font-family="ui-monospace,monospace" font-size="10.5" fill="#5d6e76">page 單位 · ISPP</text><g transform="translate(266,48)"><text x="9.0" y="2" font-family="ui-monospace,monospace" font-size="10" fill="#5d6e76">BL 0V (sel)</text><line x1="35.0" y1="6" x2="35.0" y2="14" stroke="#bf5f12" stroke-width="1.5"/><polygon points="6,17 14,9 72,9 64,17" fill="#fbeed8" stroke="#bf5f12" stroke-width="1"/><polygon points="64,17 72,9 72,23 64,31" fill="#f3d6b0" stroke="#bf5f12" stroke-width="1"/><rect x="6" y="17" width="58" height="14" fill="#f3d6b0" stroke="#bf5f12" stroke-width="1.2"/><polygon points="6,51 14,43 72,43 64,51" fill="#e6f3f2" stroke="#0d7d7d" stroke-width="1"/><polygon points="64,51 72,43 72,57 64,65" fill="#cfe7e4" stroke="#0d7d7d" stroke-width="1"/><rect x="6" y="51" width="58" height="14" fill="#cfe7e4" stroke="#0d7d7d" stroke-width="1.2"/><polygon points="6,85 14,77 72,77 64,85" fill="#d8d0ef" stroke="#5a4a90" stroke-width="1"/><polygon points="64,85 72,77 72,91 64,99" fill="#b9addf" stroke="#5a4a90" stroke-width="1"/><rect x="6" y="85" width="58" height="14" fill="#b9addf" stroke="#5a4a90" stroke-width="1.2"/><polygon points="6,119 14,111 72,111 64,119" fill="#e6f3f2" stroke="#0d7d7d" stroke-width="1"/><polygon points="64,119 72,111 72,125 64,133" fill="#cfe7e4" stroke="#0d7d7d" stroke-width="1"/><rect x="6" y="119" width="58" height="14" fill="#cfe7e4" stroke="#0d7d7d" stroke-width="1.2"/><polygon points="6,153 14,145 72,145 64,153" fill="#f6f8f9" stroke="#9aa6ab" stroke-width="1"/><polygon points="64,153 72,145 72,159 64,167" fill="#eef1f2" stroke="#9aa6ab" stroke-width="1"/><rect x="6" y="153" width="58" height="14" fill="#eef1f2" stroke="#9aa6ab" stroke-width="1.2"/><rect x="27.0" y="12" width="16" height="164" rx="3" fill="#f0b878" stroke="#bf5f12" stroke-width="1.3"/><rect x="29.5" y="15" width="3" height="158" rx="1.5" fill="#fbe7cf"/><ellipse cx="35.0" cy="12" rx="8.0" ry="3.2" fill="#fbe0c4" stroke="#bf5f12" stroke-width="1"/><rect x="13.0" y="176" width="44" height="5" rx="2" fill="#bf5f12"/><text x="13.0" y="194" font-family="ui-monospace,monospace" font-size="10" fill="#5d6e76">Source ~2V</text><text x="78" y="28" font-family="ui-monospace,monospace" font-size="10.5" fill="#2b3c44">SGD on</text><text x="78" y="62" font-family="ui-monospace,monospace" font-size="10.5" fill="#2b3c44">Vpass ~10V</text><text x="78" y="96" font-family="ui-monospace,monospace" font-size="10.5" fill="#5a4a90" font-weight="700">Vpgm ~20V</text><text x="78" y="130" font-family="ui-monospace,monospace" font-size="10.5" fill="#2b3c44">Vpass ~10V</text><text x="78" y="164" font-family="ui-monospace,monospace" font-size="10.5" fill="#2b3c44">SGS off</text><text x="47.0" y="90" font-family="ui-monospace,monospace" font-size="12" fill="#5a4a90" font-weight="700">e⁻→</text><text x="0" y="205" font-family="ui-monospace,monospace" font-size="10" fill="#5d6e76">選中 WL=Vpgm、其餘 Vpass；</text><text x="0" y="220" font-family="ui-monospace,monospace" font-size="10" fill="#5d6e76">selected BL=0V → FN 注入電子 → Vth↑。</text><text x="0" y="235" font-family="ui-monospace,monospace" font-size="10" fill="#5d6e76">Inhibit BL 拉高靠 self-boosting 擋住。</text></g><line x1="506" y1="44" x2="506" y2="245" stroke="#e6ecee"/><text x="518" y="22" font-family="ui-monospace,monospace" font-size="14" font-weight="700" fill="#5a4a90">READ</text><text x="518" y="37" font-family="ui-monospace,monospace" font-size="10.5" fill="#5d6e76">page 單位</text><g transform="translate(518,48)"><text x="9.0" y="2" font-family="ui-monospace,monospace" font-size="10" fill="#5d6e76">BL ~0.5V</text><line x1="35.0" y1="6" x2="35.0" y2="14" stroke="#bf5f12" stroke-width="1.5"/><polygon points="6,17 14,9 72,9 64,17" fill="#fbeed8" stroke="#bf5f12" stroke-width="1"/><polygon points="64,17 72,9 72,23 64,31" fill="#f3d6b0" stroke="#bf5f12" stroke-width="1"/><rect x="6" y="17" width="58" height="14" fill="#f3d6b0" stroke="#bf5f12" stroke-width="1.2"/><polygon points="6,51 14,43 72,43 64,51" fill="#e6f3f2" stroke="#0d7d7d" stroke-width="1"/><polygon points="64,51 72,43 72,57 64,65" fill="#cfe7e4" stroke="#0d7d7d" stroke-width="1"/><rect x="6" y="51" width="58" height="14" fill="#cfe7e4" stroke="#0d7d7d" stroke-width="1.2"/><polygon points="6,85 14,77 72,77 64,85" fill="#ece7f7" stroke="#5a4a90" stroke-width="1"/><polygon points="64,85 72,77 72,91 64,99" fill="#d8d0ef" stroke="#5a4a90" stroke-width="1"/><rect x="6" y="85" width="58" height="14" fill="#d8d0ef" stroke="#5a4a90" stroke-width="1.2"/><polygon points="6,119 14,111 72,111 64,119" fill="#e6f3f2" stroke="#0d7d7d" stroke-width="1"/><polygon points="64,119 72,111 72,125 64,133" fill="#cfe7e4" stroke="#0d7d7d" stroke-width="1"/><rect x="6" y="119" width="58" height="14" fill="#cfe7e4" stroke="#0d7d7d" stroke-width="1.2"/><polygon points="6,153 14,145 72,145 64,153" fill="#fbeed8" stroke="#bf5f12" stroke-width="1"/><polygon points="64,153 72,145 72,159 64,167" fill="#f3d6b0" stroke="#bf5f12" stroke-width="1"/><rect x="6" y="153" width="58" height="14" fill="#f3d6b0" stroke="#bf5f12" stroke-width="1.2"/><rect x="27.0" y="12" width="16" height="164" rx="3" fill="#f0b878" stroke="#bf5f12" stroke-width="1.3"/><rect x="29.5" y="15" width="3" height="158" rx="1.5" fill="#fbe7cf"/><ellipse cx="35.0" cy="12" rx="8.0" ry="3.2" fill="#fbe0c4" stroke="#bf5f12" stroke-width="1"/><rect x="13.0" y="176" width="44" height="5" rx="2" fill="#bf5f12"/><text x="13.0" y="194" font-family="ui-monospace,monospace" font-size="10" fill="#5d6e76">Source GND</text><text x="78" y="28" font-family="ui-monospace,monospace" font-size="10.5" fill="#2b3c44">SGD on</text><text x="78" y="62" font-family="ui-monospace,monospace" font-size="10.5" fill="#2b3c44">VpassR ~7V</text><text x="78" y="96" font-family="ui-monospace,monospace" font-size="10.5" fill="#5a4a90" font-weight="700">Vr (掃描)</text><text x="78" y="130" font-family="ui-monospace,monospace" font-size="10.5" fill="#2b3c44">VpassR ~7V</text><text x="78" y="164" font-family="ui-monospace,monospace" font-size="10.5" fill="#2b3c44">SGS on</text><text x="47.0" y="90" font-family="ui-monospace,monospace" font-size="12" fill="#5a4a90" font-weight="700">Vr</text><text x="0" y="205" font-family="ui-monospace,monospace" font-size="10" fill="#5d6e76">未選 WL=VpassR 無條件導通；</text><text x="0" y="220" font-family="ui-monospace,monospace" font-size="10" fill="#5d6e76">選中 WL 給 Vr，量 string 通不通</text><text x="0" y="235" font-family="ui-monospace,monospace" font-size="10" fill="#5d6e76">→ 推回該 cell 的 Vth 在 Vr 哪側。</text></g></svg>
+      <figcaption><b>圖 3.1</b> 三種操作的 string 偏壓骨架。注意 read 與 program 都依賴對 unselected WL 加 pass 電壓——這個共通點是 read / pass disturb 的物理根源。</figcaption>
+    </figure>
+
+    <h3>3.1 Erase — block 單位、FN tunneling</h3>
+    <p>抹除以 <strong>block</strong> 為單位。2D / 3D body erase 直接把 channel/well 拉到 ~20V、WL 接 0V，靠強電場把儲存層的電子 FN tunneling 拉回 channel，Vth 降到最低的 erase state。3D 因 string 與基板解耦，常用 <strong>GIDL erase</strong>：在 source/drain junction 用 GIDL 產生 electron–hole pair，把 holes 灌進 channel 抬高 body 電位。</p>
+
+    <h3>3.2 Program — ISPP 與 self-boosting inhibit</h3>
+    <p>寫入以 <strong>page</strong> 為單位，採 <span class="term">ISPP</span>（Incremental Step Pulse Program）：一連串逐步升高的 Vpgm 脈衝 + program-verify，把 Vth 精準推到目標 state。要寫的 BL 接 0V 讓 channel 低電位形成強場注入；不寫（inhibit）的 BL 拉高，靠 <strong>self-boosting</strong> 把 channel 電位浮高、壓低跨 tunnel oxide 的電場避免誤寫。</p>
+    <div class="callout c-pitfall">
+      <div class="h">⚠ 易錯陷阱：program 順序</div>
+      <p>NAND 必須<strong>從 source 端往 drain 端</strong>依序寫（WL by WL），因為一個 cell 的 Vth 量測會受其與 source 之間 cell 狀態影響（<span class="term">background pattern dependency</span>）。順序錯了，verify 階段與真正 read 階段看到的 Vth 會不一致，直接造成 read fail。</p>
+    </div>
+
+    <h3>3.3 Read — Vr 掃描與 sensing</h3>
+    <p>讀取對選中 WL 給參考電壓 Vr，其餘 WL 給 VpassR(~7V) 無條件導通。若 cell Vth &lt; Vr → string 導通（讀為 1）；Vth &gt; Vr → 不導通（讀為 0）。多階 cell（MLC/TLC/QLC）就用多個 Vr 把 Vth 軸切成多段。</p>
+
+    <h3>3.4 SGD Vth 如何影響操作窗</h3>
+    <p>SGD（drain select gate）本身就是一顆 transistor，它的 Vth 必須落在一個<strong>剛剛好的 operating window</strong>，否則 program/inhibit 都會壞。這是新人最容易忽略、senior 最先檢查的地方。</p>
+    <div class="callout c-senior">
+      <div class="h">◆ Senior 觀點：SGD Vth 的兩條 failure tail</div>
+      <p><strong>低 Vth 尾（leakage 端）：</strong>SGD Vth 太低，在 inhibit 時關不乾淨，subthreshold leakage 會把已 boost 起來的 channel 電位<strong>洩掉</strong>，導致 inhibit 失效而誤寫。關鍵直覺：channel capacitance 很小，所以這裡是<strong>靠「漏電」就足以崩掉 boosting</strong>，不需要 SGD 完全導通。<br>
+      <strong>高 Vth 尾（floating 端）：</strong>SGD Vth 太高，selected string 在 program 時 SGD 開不夠、channel 與 BL 脫離（floating），0V 傳不進去 → 跨 tunnel oxide 的 FN 場不足 → 寫不進、program 變慢或失敗。</p>
+    </div>
+  </section>
+
+  <!-- ============ 4 Reliability ============ -->
+  <section id="c4">
+    <div class="sec-head"><span class="num">04</span><h2>Reliability Issues</h2></div>
+    <p>Reliability 的共同語言是 <strong>Vth distribution 的位移與展寬</strong>：任何機制只要讓 distribution 漂移或變寬到吃掉 read margin，就會產生 bit error。下面四個是 FA 最常碰到的。</p>
+
+    <h3>4.1 Retention（資料保存）</h3>
+    <p>寫好後電荷隨時間漏失，programmed state 的 Vth <strong>往下漂</strong>、distribution 展寬。在 charge-trap（CTF）cell，short-term retention 由幾個機制主導：lateral migration（LM，橫向遷移）、vertical relaxation（VR，縱向鬆弛）、trap-assisted tunneling（TAT，去陷阱），以及 BE-tunnel oxide 內近 channel trap 的快速 detrapping。</p>
+
+    <h3>4.2 Cross-temperature read & Arrhenius 外推陷阱</h3>
+    <p>「寫入溫度」與「讀取溫度」不同時，Vth 會整體偏移（cross-temperature read），因此 read level 需要溫度補償。更深的坑在 <strong>retention 壽命的溫度外推</strong>。</p>
+    <figure>
+      <svg viewBox="0 0 640 250" role="img" aria-label="Arrhenius 兩段斜率示意"><line x1="70" y1="30" x2="70" y2="212" stroke="#15242c"/><line x1="70" y1="212" x2="600" y2="212" stroke="#15242c"/><text x="20" y="40" font-family="ui-monospace,monospace" font-size="12" fill="#5d6e76">log(charge loss)</text><text x="430" y="234" font-family="ui-monospace,monospace" font-size="12" fill="#5d6e76">1/T  (高溫 → 低溫 →)</text><polyline points="110,70 575,212" fill="none" stroke="#b03426" stroke-width="1.4" stroke-dasharray="6 5"/><polyline points="110,70 330,146" fill="none" stroke="#bf5f12" stroke-width="2.6"/><polyline points="330,146 575,176" fill="none" stroke="#5a4a90" stroke-width="2.6"/><circle cx="330" cy="146" r="4.5" fill="#15242c"/><text x="130" y="96" font-family="ui-monospace,monospace" font-size="11.5" fill="#bf5f12">高溫：thermal emission</text><text x="130" y="112" font-family="ui-monospace,monospace" font-size="10.5" fill="#8f470c">大 Ea，斜率陡</text><text x="380" y="150" font-family="ui-monospace,monospace" font-size="11.5" fill="#5a4a90">低溫：band-to-band / 橫向遷移</text><text x="380" y="166" font-family="ui-monospace,monospace" font-size="10.5" fill="#3a2f66">小 Ea，斜率緩 → loss 比外推高</text><text x="345" y="205" font-family="ui-monospace,monospace" font-size="11" fill="#b03426">單一 Ea 外推 → 高估壽命</text></svg>
+      <figcaption><b>圖 4.1</b> 3D CTF/SONOS 的 charge loss vs 溫度<strong>非線性</strong>：機制隨溫度切換（高溫由 thermal emission、低溫由 band-to-band / 橫向遷移主導）。用單一 activation energy 從高溫加速結果外推到低溫，會<strong>高估</strong>實際壽命。</figcaption>
+    </figure>
+    <div class="callout c-danger">
+      <div class="h">✖ 高風險陷阱：別用單段 Arrhenius</div>
+      <p>3D charge-trap cell 的 Vth shift 與烘烤溫度呈<strong>非線性</strong>（兩段 Ea），這與 2D FG 的線性行為不同。直接套用幾十年來的單一溫度加速模型，會把低溫實際壽命<strong>嚴重高估</strong>。低於 ~90 °C 的 retention 必須用較低溫、長時間（至少數週）資料外推驗證，不能只靠高溫 bake。<em>這是 reliability methodology 必須明確標注的一條。</em></p>
+    </div>
+
+    <h3>4.3 Read disturb</h3>
+    <p>讀取時，被加 VpassR 的 unselected WL 上的 cell 受到弱電場，少量電子被注入儲存層 → Vth 緩慢<strong>往上</strong>漂。特性：<strong>erased（負 Vth）cell 最敏感</strong>、隨 read 次數與 Vpass 升高而惡化、distribution 往高 Vth 展寬；屬可恢復（erase 後重寫即還原，非永久 oxide 損傷）。緩解靠 ECC/LDPC、Vth window margin、read refresh。</p>
+
+    <h3>4.4 Program disturb（含 3D 新模式）</h3>
+    <p>寫某 page 時，未被選中的鄰近 cell 受到 Vpgm / self-boosting 電場干擾。2D 主要是同 WL 上 inhibit cell 的誤寫；3D 因一條 BL 接多個 SGD（DSL_1..N），多出 <strong>Y / XY</strong> 兩種新模式——其中 BL 接地、DSL off 的 <strong>Y mode</strong> 最棘手，因為 3D 的 DSL leakage 較大，boosting 電位可能透過 DSL 漏掉。</p>
+    <div class="callout c-physics">
+      <div class="h">▣ 反直覺：CTF 的 program disturb 可能是 Vth「下移」</div>
+      <p>新人直覺會以為「disturb 一律讓 Vth 升」。但在 3D charge-trap cell，強 channel boosting 下的 inhibit cell 可能發生<strong>soft erase</strong>——boost 起來的高 channel 電位反而把電子拉出儲存層，造成 Vth <strong>downshift</strong>。這與 read disturb 的「Vth 上移」<strong>方向相反</strong>，FA 時若看到 inhibit 區 Vth 下移，要往這個方向想，而不是排除 program disturb。</p>
+    </div>
+
+    <h3>4.5 Endurance 與 cell-to-cell interference</h3>
+    <p>P/E cycling 會在 tunnel oxide 累積 trap（trapping/detrapping），使 Vth window 漂移、SILC 增加、retention 變差，最終達到 endurance 上限。另外 <strong>CTCI</strong>（cell-to-cell interference）即使在 3D 改用 SiN 儲存層後仍存在：鄰近 WL 儲存的電子仍會影響本 cell 的 channel 電位，使 distribution 展寬——這是 distribution 工程要持續對抗的雜訊源。</p>
+
+    <div class="tbl-scroll">
+    <table>
+      <caption>表 4.1 · 四大 disturb / 漂移的方向與對策</caption>
+      <thead><tr><th>機制</th><th>受影響 cell</th><th>Vth 方向</th><th>是否永久</th><th>對策</th></tr></thead>
+      <tbody>
+        <tr><td>Read disturb</td><td>同 block 未選 WL（erased 最敏感）</td><td>↑ 上移</td><td>否（可恢復）</td><td>ECC、read refresh、Vpass 優化</td></tr>
+        <tr><td>Program disturb</td><td>鄰近未選 cell（3D：Y/XY）</td><td>↑ 為主；CTF 可 ↓</td><td>否</td><td>self-boosting、program 順序、verify</td></tr>
+        <tr><td>Retention</td><td>已寫入 cell</td><td>↓ 下移 + 展寬</td><td>否（電荷漏）</td><td>read level 補償、refresh、cell 結構</td></tr>
+        <tr><td>Endurance / cycling</td><td>全 cell（tunnel oxide trap）</td><td>window 漂移</td><td>是（趨永久）</td><td>wear leveling、強 ECC、限 P/E</td></tr>
+      </tbody>
+    </table>
+    </div>
+  </section>
+
+  <!-- ============ 5 2D vs 3D ============ -->
+  <section id="c5">
+    <div class="sec-head"><span class="num">05</span><h2>2D vs 3D NAND</h2></div>
+    <p>2D NAND 靠微縮平面 cell 來增密度，逼近 ~1x nm 後 floating gate 之間的耦合、電子數統計漲落（RTN）讓 distribution 失控，微縮走到盡頭。3D 改變思路：<strong>不再縮平面，而是往上堆疊 WL</strong>，用垂直 channel pillar 串起整條 string。</p>
+
+    <figure>
+      <svg viewBox="0 0 700 270" role="img" aria-label="2D 平面 cell 與 3D 垂直 GAA string 比較"><text x="20" y="22" font-family="ui-monospace,monospace" font-size="14" font-weight="700" fill="#0d7d7d">2D — 平面 cell</text><g transform="translate(20,40)"><rect x="0" y="150" width="290" height="34" fill="#e3e8ea" stroke="#5d6e76"/><text x="100" y="200" font-family="ui-monospace,monospace" font-size="11" fill="#5d6e76">Si substrate (channel)</text><rect x="20" y="142" width="70" height="8" fill="#fbf0e2" stroke="#bf5f12"/><rect x="20" y="112" width="70" height="28" fill="#cfe7e4" stroke="#0d7d7d"/><rect x="20" y="104" width="70" height="6" fill="#fbf0e2" stroke="#bf5f12"/><rect x="20" y="80" width="70" height="22" fill="#efecf7" stroke="#5a4a90"/><rect x="120" y="142" width="70" height="8" fill="#fbf0e2" stroke="#bf5f12"/><rect x="120" y="112" width="70" height="28" fill="#cfe7e4" stroke="#0d7d7d"/><rect x="120" y="104" width="70" height="6" fill="#fbf0e2" stroke="#bf5f12"/><rect x="120" y="80" width="70" height="22" fill="#efecf7" stroke="#5a4a90"/><rect x="220" y="142" width="70" height="8" fill="#fbf0e2" stroke="#bf5f12"/><rect x="220" y="112" width="70" height="28" fill="#cfe7e4" stroke="#0d7d7d"/><rect x="220" y="104" width="70" height="6" fill="#fbf0e2" stroke="#bf5f12"/><rect x="220" y="80" width="70" height="22" fill="#efecf7" stroke="#5a4a90"/><text x="20" y="74" font-family="ui-monospace,monospace" font-size="10" fill="#5a4a90">CG</text><text x="124" y="128" font-family="ui-monospace,monospace" font-size="10" fill="#0d7d7d">FG</text><text x="0" y="228" font-family="ui-monospace,monospace" font-size="10.5" fill="#b03426">微縮極限：cell 間耦合、RTN、distribution 失控</text></g><line x1="355" y1="30" x2="355" y2="250" stroke="#d6dee1" stroke-dasharray="4 4"/><text x="385" y="22" font-family="ui-monospace,monospace" font-size="14" font-weight="700" fill="#bf5f12">3D — 垂直 GAA string</text><g transform="translate(400,40)"><polygon points="60,30 67,23 187,23 180,30" fill="#e6f3f2" stroke="#0d7d7d" stroke-width="1"/><polygon points="180,30 187,23 187,47 180,54" fill="#cfe7e4" stroke="#0d7d7d" stroke-width="1"/><rect x="60" y="30" width="120" height="24" fill="#cfe7e4" stroke="#0d7d7d" stroke-width="1.1"/><polygon points="60,68 67,61 187,61 180,68" fill="#e6f3f2" stroke="#0d7d7d" stroke-width="1"/><polygon points="180,68 187,61 187,85 180,92" fill="#cfe7e4" stroke="#0d7d7d" stroke-width="1"/><rect x="60" y="68" width="120" height="24" fill="#cfe7e4" stroke="#0d7d7d" stroke-width="1.1"/><polygon points="60,106 67,99 187,99 180,106" fill="#e6f3f2" stroke="#0d7d7d" stroke-width="1"/><polygon points="180,106 187,99 187,123 180,130" fill="#cfe7e4" stroke="#0d7d7d" stroke-width="1"/><rect x="60" y="106" width="120" height="24" fill="#cfe7e4" stroke="#0d7d7d" stroke-width="1.1"/><polygon points="60,144 67,137 187,137 180,144" fill="#e6f3f2" stroke="#0d7d7d" stroke-width="1"/><polygon points="180,144 187,137 187,161 180,168" fill="#cfe7e4" stroke="#0d7d7d" stroke-width="1"/><rect x="60" y="144" width="120" height="24" fill="#cfe7e4" stroke="#0d7d7d" stroke-width="1.1"/><rect x="111" y="18" width="18" height="170" rx="3" fill="#f0b878" stroke="#bf5f12" stroke-width="1.3"/><rect x="114" y="22" width="3" height="160" rx="1.5" fill="#fbe7cf"/><ellipse cx="120" cy="18" rx="9" ry="3.2" fill="#fbe0c4" stroke="#bf5f12" stroke-width="1"/><text x="200" y="48" font-family="ui-monospace,monospace" font-size="10" fill="#0d7d7d">WL (plate)</text><text x="134" y="198" font-family="ui-monospace,monospace" font-size="10" fill="#bf5f12">channel pillar</text><text x="0" y="228" font-family="ui-monospace,monospace" font-size="10.5" fill="#5d6e76">堆疊 WL plate；垂直 channel 貫穿 → 靠層數增密度</text></g></svg>
+      <figcaption><b>圖 5.1</b> 2D 把 cell 攤平在矽基板上微縮；3D 把 WL 做成水平 plate 一層層堆，垂直 channel pillar 貫穿，每個 WL/channel 交會處就是一個 cell。密度靠「堆層數 (Z)」而非縮線寬。</figcaption>
+    </figure>
+
+    <div class="tbl-scroll">
+    <table>
+      <caption>表 5.1 · 2D vs 3D 對照</caption>
+      <thead><tr><th>面向</th><th>2D NAND</th><th>3D NAND</th></tr></thead>
+      <tbody>
+        <tr><td>密度增長</td><td>縮平面線寬（已撞牆）</td><td class="pro">堆疊層數（128 / 176 / 200+ 層）</td></tr>
+        <tr><td>主要儲存方式</td><td>多為 floating gate</td><td>多為 charge trap（亦有 FG 版）</td></tr>
+        <tr><td>Gate 結構</td><td>平面 gate</td><td class="pro">Gate-all-around（環繞）</td></tr>
+        <tr><td>Cell 間耦合</td><td class="con">嚴重（鄰近 FG 耦合）</td><td>改善但 CTCI 仍在</td></tr>
+        <tr><td>RTN / 電子統計</td><td class="con">小 cell 漲落大</td><td>cell 較大、較緩</td></tr>
+        <tr><td>製程挑戰</td><td>微影解析度</td><td class="con">high-aspect-ratio channel hole 蝕刻</td></tr>
+      </tbody>
+    </table>
+    </div>
+    <div class="callout c-senior">
+      <div class="h">◆ Senior 觀點：GAA 的雙重好處</div>
+      <p>Gate-all-around 環繞 channel 帶來兩個物理好處：(1) 更佳的 subthreshold slope 與更低 leakage；(2) 因曲率半徑小，tunnel oxide 內<strong>電場更高</strong>，program/erase 效率提升。但代價是 channel hole 的 aspect ratio 隨層數爆增——這正是 3D 良率與製程的主戰場。</p>
+    </div>
+  </section>
+
+  <!-- ============ 6 CT vs FG ============ -->
+  <section id="c6">
+    <div class="sec-head"><span class="num">06</span><h2>Charge Trap vs Floating Gate</h2></div>
+    <p>兩者差別在<strong>電荷儲存在哪</strong>：FG 把電荷存在<strong>導電的</strong> poly-Si 浮閘（電荷可在 FG 內自由移動、cell 間需物理隔離）；CT（SiN/SONOS）把電荷<strong>陷在絕緣的</strong>氮化矽 trap 裡（電荷不流動，儲存層可連續共用）。</p>
+
+    <figure>
+      <svg viewBox="0 0 680 250" role="img" aria-label="Floating gate cell 與 charge-trap cell 結構比較">
+        <text x="20" y="24" font-family="ui-monospace,monospace" font-size="14" font-weight="700" fill="#0d7d7d">Floating Gate (FG)</text>
+        <g transform="translate(30,40)">
+          <rect x="0" y="150" width="240" height="26" fill="#eceff1" stroke="#5d6e76"/><text x="6" y="168" font-family="ui-monospace,monospace" font-size="11" fill="#5d6e76">channel</text>
+          <rect x="40" y="128" width="160" height="14" fill="#fbf0e2" stroke="#bf5f12"/><text x="205" y="139" font-family="ui-monospace,monospace" font-size="10" fill="#bf5f12">tunnel ox</text>
+          <rect x="40" y="92" width="160" height="30" fill="#e6f3f2" stroke="#0d7d7d"/><text x="78" y="111" font-family="ui-monospace,monospace" font-size="11" fill="#0d7d7d">poly-Si FG（導電）</text>
+          <rect x="40" y="74" width="160" height="14" fill="#fbf0e2" stroke="#bf5f12"/><text x="205" y="85" font-family="ui-monospace,monospace" font-size="10" fill="#bf5f12">IPD/ONO</text>
+          <rect x="40" y="50" width="160" height="20" fill="#efecf7" stroke="#5a4a90"/><text x="92" y="64" font-family="ui-monospace,monospace" font-size="11" fill="#5a4a90">control gate</text>
+          <text x="0" y="200" font-family="ui-monospace,monospace" font-size="10.5" fill="#5d6e76">電荷可流動 → cell 間須隔離；單缺陷漏電→全 FG 流失</text>
+        </g>
+        <line x1="330" y1="30" x2="330" y2="220" stroke="#d6dee1" stroke-dasharray="4 4"/>
+        <text x="360" y="24" font-family="ui-monospace,monospace" font-size="14" font-weight="700" fill="#bf5f12">Charge Trap (SiN/SONOS)</text>
+        <g transform="translate(370,40)">
+          <rect x="0" y="150" width="240" height="26" fill="#eceff1" stroke="#5d6e76"/><text x="6" y="168" font-family="ui-monospace,monospace" font-size="11" fill="#5d6e76">channel</text>
+          <rect x="40" y="128" width="160" height="14" fill="#fbf0e2" stroke="#bf5f12"/><text x="205" y="139" font-family="ui-monospace,monospace" font-size="10" fill="#bf5f12">tunnel ox</text>
+          <rect x="40" y="92" width="160" height="30" fill="#dfd9f0" stroke="#5a4a90"/><text x="70" y="111" font-family="ui-monospace,monospace" font-size="11" fill="#5a4a90">SiN trap（絕緣）</text>
+          <rect x="40" y="74" width="160" height="14" fill="#fbf0e2" stroke="#bf5f12"/><text x="205" y="85" font-family="ui-monospace,monospace" font-size="10" fill="#bf5f12">block ox</text>
+          <rect x="40" y="50" width="160" height="20" fill="#efecf7" stroke="#5a4a90"/><text x="78" y="64" font-family="ui-monospace,monospace" font-size="11" fill="#5a4a90">(high-k) metal gate</text>
+          <text x="0" y="200" font-family="ui-monospace,monospace" font-size="10.5" fill="#5d6e76">電荷被陷不流動 → 可連續共用；單缺陷只漏局部電荷</text>
+        </g>
+      </svg>
+      <figcaption><b>圖 6.1</b> FG 的浮閘是導電 poly-Si，電荷自由移動故 cell 間必須物理切開；CT 的 SiN 是絕緣陷阱層，電荷被「釘」在原地，3D 中儲存層可沿 pillar 連續、製程更簡單。</figcaption>
+    </figure>
+
+    <div class="tbl-scroll">
+    <table>
+      <caption>表 6.1 · Floating Gate vs Charge Trap</caption>
+      <thead><tr><th>面向</th><th>Floating Gate</th><th>Charge Trap (SiN)</th></tr></thead>
+      <tbody>
+        <tr><td>儲存層</td><td>導電 poly-Si 浮閘</td><td>絕緣 SiN，電荷陷於 trap</td></tr>
+        <tr><td>電荷行為</td><td>可在 FG 內自由移動</td><td>不流動、局部釘住</td></tr>
+        <tr><td>cell 隔離</td><td class="con">須物理切開（製程複雜）</td><td class="pro">可連續共用、memory hole 直徑大、利於堆高</td></tr>
+        <tr><td>缺陷容忍</td><td class="con">單一漏電路徑→整個 FG 電荷流失</td><td class="pro">單缺陷只損局部 trap 的電荷</td></tr>
+        <tr><td>耦合 / 干擾</td><td class="con">FG 間耦合強</td><td>較佳，但仍有 CTCI</td></tr>
+        <tr><td>Short-term retention</td><td class="pro">相對穩定</td><td class="con">較弱（LM/VR/TAT 快速 detrap）</td></tr>
+        <tr><td>3D 採用度</td><td>較少（製程難）</td><td class="pro">主流（RG NAND / SONOS）</td></tr>
+      </tbody>
+    </table>
+    </div>
+    <div class="callout c-physics">
+      <div class="h">▣ 機制：CT 怎麼補救 retention 弱點</div>
+      <p>CT 的快速 detrapping 用 <strong>band-engineered (BE) tunnel dielectric</strong> 改善：erase 時增強 hole injection，同時用 <strong>high-k / metal gate</strong> 抑制電子從 gate 端 back-tunneling。理解這點，才能在 FA 看到「短期 retention 異常」時，把矛頭指向 BE-tunnel / blocking 層的製程，而不是泛泛歸因「電荷漏掉」。</p>
+    </div>
+  </section>
+
+  <!-- ============ 7 3D 製程 ============ -->
+  <section id="c7">
+    <div class="sec-head"><span class="num">07</span><h2>3D Flash 製程簡介</h2></div>
+    <p>3D NAND 的精神是「<strong>一次蝕刻打穿所有層</strong>」：先堆好多層薄膜，再用單次（極困難的）high-aspect-ratio 蝕刻一次定義所有垂直 cell，把每層的關鍵 mask 從「每層一次」降為「全部一次」，這正是成本優勢來源。以 charge-trap RG NAND 的 gate-replacement 流程為主軸：</p>
+
+    <figure>
+      <svg viewBox="0 0 700 170" role="img" aria-label="3D NAND gate-replacement 製程流程">
+        <g font-family="ui-monospace,monospace" font-size="11">
+        <!-- step 1 -->
+        <g transform="translate(20,30)">
+          <rect x="0" y="0" width="90" height="90" fill="none" stroke="#d6dee1"/>
+          <g>
+            <rect x="0" y="0" width="90" height="12" fill="#efecf7"/><rect x="0" y="20" width="90" height="12" fill="#efecf7"/>
+            <rect x="0" y="40" width="90" height="12" fill="#efecf7"/><rect x="0" y="60" width="90" height="12" fill="#efecf7"/>
+            <rect x="0" y="12" width="90" height="8" fill="#fbf0e2"/><rect x="0" y="32" width="90" height="8" fill="#fbf0e2"/>
+            <rect x="0" y="52" width="90" height="8" fill="#fbf0e2"/><rect x="0" y="72" width="90" height="8" fill="#fbf0e2"/>
+          </g>
+          <text x="0" y="110" fill="#5d6e76">① 堆疊</text><text x="0" y="124" fill="#8a979d" font-size="10">oxide/nitride 交替</text>
+        </g>
+        <text x="118" y="78" font-size="18" fill="#0d7d7d">→</text>
+        <!-- step 2 -->
+        <g transform="translate(150,30)">
+          <rect x="0" y="0" width="90" height="90" fill="none" stroke="#d6dee1"/>
+          <rect x="0" y="0" width="90" height="90" fill="#eceff1"/>
+          <rect x="38" y="0" width="14" height="90" fill="#fff" stroke="#bf5f12" stroke-dasharray="2 2"/>
+          <text x="0" y="110" fill="#5d6e76">② channel hole</text><text x="0" y="124" fill="#8a979d" font-size="10">高 AR 蝕刻一次穿透</text>
+        </g>
+        <text x="248" y="78" font-size="18" fill="#0d7d7d">→</text>
+        <!-- step 3 -->
+        <g transform="translate(280,30)">
+          <rect x="0" y="0" width="90" height="90" fill="none" stroke="#d6dee1"/>
+          <rect x="0" y="0" width="90" height="90" fill="#eceff1"/>
+          <rect x="35" y="0" width="20" height="90" fill="#fbe0c4" stroke="#bf5f12"/>
+          <rect x="40" y="0" width="10" height="90" fill="#dfd9f0"/>
+          <text x="0" y="110" fill="#5d6e76">③ 成膜</text><text x="0" y="124" fill="#8a979d" font-size="10">ONO + channel poly</text>
+        </g>
+        <text x="378" y="78" font-size="18" fill="#0d7d7d">→</text>
+        <!-- step 4 -->
+        <g transform="translate(410,30)">
+          <rect x="0" y="0" width="90" height="90" fill="none" stroke="#d6dee1"/>
+          <rect x="0" y="0" width="90" height="12" fill="#cfe0e2"/><rect x="0" y="20" width="90" height="12" fill="#cfe0e2"/>
+          <rect x="0" y="40" width="90" height="12" fill="#cfe0e2"/><rect x="0" y="60" width="90" height="12" fill="#cfe0e2"/>
+          <rect x="0" y="12" width="90" height="8" fill="#eceff1"/><rect x="0" y="32" width="90" height="8" fill="#eceff1"/>
+          <rect x="0" y="52" width="90" height="8" fill="#eceff1"/><rect x="0" y="72" width="90" height="8" fill="#eceff1"/>
+          <rect x="40" y="0" width="10" height="80" fill="#fbe0c4" stroke="#bf5f12"/>
+          <text x="0" y="110" fill="#5d6e76">④ gate replace</text><text x="0" y="124" fill="#8a979d" font-size="10">抽 nitride → 填 W gate</text>
+        </g>
+        <text x="508" y="78" font-size="18" fill="#0d7d7d">→</text>
+        <!-- step 5 -->
+        <g transform="translate(540,30)">
+          <rect x="0" y="0" width="120" height="90" fill="none" stroke="#d6dee1"/>
+          <path d="M0,70 L20,70 L20,55 L40,55 L40,40 L60,40 L60,25 L80,25" fill="none" stroke="#5a4a90" stroke-width="2"/>
+          <rect x="0" y="78" width="120" height="12" fill="#cfe0e2"/>
+          <text x="0" y="110" fill="#5d6e76">⑤ staircase + CuA</text><text x="0" y="124" fill="#8a979d" font-size="10">WL 階梯接點 / CMOS under array</text>
+        </g>
+        </g>
+      </svg>
+      <figcaption><b>圖 7.1</b> RG（gate-replacement）流程骨架：① oxide/nitride 交替堆疊 → ② 單次高 AR channel hole 蝕刻 → ③ 填 ONO 與 channel poly → ④ 抽掉 nitride 換成金屬 WL（replacement gate）→ ⑤ staircase 做各層 WL 接點、CMOS-under-Array 省面積。</figcaption>
+    </figure>
+
+    <ul>
+      <li><strong>Channel hole 蝕刻</strong>是良率瓶頸：層數越高、AR 越大，孔形（彎曲、上下直徑差）直接影響各層 cell 一致性。</li>
+      <li><strong>Staircase</strong>：每層 WL 都要拉出接點，做成階梯狀，是面積與微影的額外成本。</li>
+      <li><strong>CMOS 配置</strong>：CoA（旁邊）→ <strong>CuA</strong>（CMOS under Array，把週邊電路塞到 array 下方）→ <strong>WoW</strong>（wafer-on-wafer，CMOS 與 array 分開做再鍵合），都是為了塞進更多 plane、拉高平行度與面積效率。</li>
+    </ul>
+    <div class="callout c-senior">
+      <div class="h">◆ Senior 觀點</div>
+      <p>很多「沿 WL 方向（pillar 上下）的 Vth 系統性差異」其實是 channel hole 直徑隨深度漸縮造成的——上下 cell 的 gate-channel 幾何不同。看到 layer-dependent 的 Vth 偏移，先想製程幾何（hole profile），再想 array operation。把 device 行為對應回製程，是 FA 的核心能力。</p>
+    </div>
+  </section>
+
+  <!-- ============ 8 QUIZ ============ -->
+  <section id="c8">
+    <div class="sec-head"><span class="num">08</span><h2>知識驗收 · 50 題題庫</h2></div>
+    <p>下面是涵蓋全八章的 50 題題庫。點「<strong>開始測驗</strong>」會<strong>隨機抽 10 題</strong>（選項順序也會打散），作答後交卷看分數與<strong>逐題詳解</strong>。每次重抽都是不同組合，可反覆練到熟。</p>
+
+    <div class="quiz">
+      <div class="quiz-head">
+        <h3>隨機抽考 · 10 / 50</h3>
+        <p>機制優先。詳解會告訴你「為什麼」，而不只是「哪個對」。</p>
+      </div>
+      <div class="quiz-bar">
+        <button class="btn btn-primary" id="startBtn">開始測驗</button>
+        <button class="btn btn-ghost" id="submitBtn" disabled>交卷</button>
+        <button class="btn btn-ghost" id="revealBtn" disabled>直接看答案</button>
+        <span class="quiz-meta" id="quizMeta">尚未開始</span>
+      </div>
+      <div id="quizBody">
+        <div class="scorecard" id="scorecard"></div>
+        <p class="muted" id="quizHint" style="padding:8px 0">點「開始測驗」抽出 10 題。</p>
+      </div>
+    </div>
+  </section>
+
+  </main>
+</div>
+
+<footer>
+  Engineering Academy · Theme 03 — NAND Flash 元件養成手冊
+  <span class="mono">純靜態 / 零相依 · 可直接託管於 GitHub Pages 或 Vercel · 編輯本檔後 git push 即更新</span>
+</footer>
+
+<script>
+/* ============ TOC active highlight ============ */
+(function(){
+  var links = Array.prototype.slice.call(document.querySelectorAll('nav.toc a'));
+  var map = {};
+  links.forEach(function(a){ var id=a.getAttribute('href').slice(1); map[id]=a; });
+  var obs = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){
+      if(e.isIntersecting){
+        links.forEach(function(l){l.classList.remove('active');});
+        var a = map[e.target.id]; if(a) a.classList.add('active');
+      }
+    });
+  },{rootMargin:'-20% 0px -70% 0px'});
+  document.querySelectorAll('main section[id]').forEach(function(s){obs.observe(s);});
+})();
+
+/* ============ Quiz data (50) ============ */
+/* each: {q, cat, opts:[{t, c}]}  exactly one c:true */
+var QUESTIONS = [
+ {q:"NAND 相對於 NOR 最根本的架構差異是什麼？",cat:"架構",opts:[
+   {t:"NAND 的 cell 並聯、NOR 串聯",c:false},
+   {t:"NAND 把多顆 cell 串聯成 string、共用接觸，NOR 每顆 cell 直接接 BL",c:true},
+   {t:"NAND 用 charge trap、NOR 一定用 floating gate",c:false},
+   {t:"NAND 只能 SLC、NOR 可以多階",c:false}],
+  ex:"差別在接線：NAND 串聯成 string 只在頭尾放 select gate，故 cell 面積小、成本低但不能隨機定址；NOR 並聯、每 cell 可直接量測，random read 快。儲存方式與 bit/cell 都與此無關。"},
+
+ {q:"為什麼 NOR 適合做 code storage（XIP）而 NAND 不適合？",cat:"架構",opts:[
+   {t:"NOR random read 快、可 byte 隨機定址，能就地執行程式碼",c:true},
+   {t:"NOR 容量比 NAND 大",c:false},
+   {t:"NAND 不能讀取資料",c:false},
+   {t:"NOR 不需要 ECC",c:false}],
+  ex:"XIP 需要快速、可隨機定址的讀取，NOR 的並聯直接定址正好滿足；NAND 是 page 存取、random read 慢，code 必須先複製到 RAM 執行。容量上 NAND 反而更大。"},
+
+ {q:"NAND 的抹除（erase）以什麼為單位？",cat:"操作",opts:[
+   {t:"single cell",c:false},{t:"page",c:false},{t:"block",c:true},{t:"整顆 die",c:false}],
+  ex:"NAND 讀寫以 page 為單位，但抹除以 block（含多個 page）為單位。這個不對稱正是 FTL 要做 garbage collection 的根本原因。"},
+
+ {q:"Program 時 ISPP（Incremental Step Pulse Program）的目的為何？",cat:"操作",opts:[
+   {t:"一次脈衝把所有 cell 寫到最高 Vth",c:false},
+   {t:"用逐步升高的 Vpgm 脈衝搭配 verify，把 Vth 精準推到目標 state",c:true},
+   {t:"降低 read disturb",c:false},
+   {t:"加速 erase",c:false}],
+  ex:"ISPP 以一連串遞增的 Vpgm 脈衝 + program-verify，逐步逼近目標 Vth，達到窄而準的 distribution。單一大脈衝會 overshoot、distribution 失控。"},
+
+ {q:"Read 操作中，對未被選中的 WL 施加 Vpass(VpassR) 的作用是？",cat:"操作",opts:[
+   {t:"把這些 cell 寫入",c:false},
+   {t:"無條件導通這些 cell，讓 string 電流只取決於被選 cell",c:true},
+   {t:"抹除這些 cell",c:false},
+   {t:"降低功耗",c:false}],
+  ex:"因為 NAND 串聯，必須讓非目標 cell 全部導通，string 是否通才只反映目標 cell 的 Vth 是否低於 Vr。這個 Vpass 也正是 read disturb 的來源。"},
+
+ {q:"SGD 的 Vth 太低（低 Vth 尾）時，program 階段最可能出什麼問題？",cat:"操作",opts:[
+   {t:"inhibit 時 SGD 關不乾淨，subthreshold leakage 把 boost 的 channel 電位洩掉而誤寫",c:true},
+   {t:"selected string 寫不進去",c:false},
+   {t:"read 速度變快",c:false},
+   {t:"erase 失敗",c:false}],
+  ex:"低 Vth → inhibit 時關不掉，漏電使 self-boosting 電位崩掉 → 誤寫。關鍵直覺：channel 電容很小，僅靠漏電就足以崩掉 boosting，不需 SGD 完全導通。"},
+
+ {q:"SGD 的 Vth 太高（高 Vth 尾）時，selected string 在 program 時會發生什麼？",cat:"操作",opts:[
+   {t:"channel 被 boost 太高",c:false},
+   {t:"SGD 開不夠、channel 與 BL 脫離（floating），0V 傳不進去，FN 場不足而寫不進",c:true},
+   {t:"read disturb 加劇",c:false},
+   {t:"retention 變好",c:false}],
+  ex:"高 Vth 使 SGD 難以充分導通，selected channel 拿不到 BL 的 0V → 跨 tunnel oxide 電場不足 → program 變慢或失敗。這是 SGD 操作窗的高 Vth failure tail。"},
+
+ {q:"程式化（program）一條 string 內的 cell，正確順序是？",cat:"操作",opts:[
+   {t:"隨機順序皆可",c:false},
+   {t:"從 drain 端往 source 端",c:false},
+   {t:"從 source 端往 drain 端依序",c:true},
+   {t:"先寫中間再往兩端",c:false}],
+  ex:"因 background pattern dependency，cell Vth 量測受其與 source 間 cell 狀態影響。從 source→drain 依序寫，可確保 verify 與 read 看到一致的 Vth；順序錯會造成 read fail。"},
+
+ {q:"3D NAND 的 GIDL erase 與傳統 body erase 的主要差別是？",cat:"操作",opts:[
+   {t:"GIDL erase 用 source/drain junction 的 GIDL 產生 e–h pair 供應 holes 抬高 channel 電位",c:true},
+   {t:"GIDL erase 不需要高電壓",c:false},
+   {t:"GIDL erase 把電子注入儲存層",c:false},
+   {t:"GIDL erase 以 page 為單位",c:false}],
+  ex:"當 string 與基板解耦（如 CuA 結構），無法從基板供 holes，改在 junction 用 GIDL 產生電子-電洞對，把 holes 灌進 channel 抬高 body 電位完成抹除。"},
+
+ {q:"Read disturb 造成的 Vth 變化方向，以及最敏感的 cell 是？",cat:"reliability",opts:[
+   {t:"Vth 下移；programmed cell 最敏感",c:false},
+   {t:"Vth 上移；erased（負 Vth）cell 最敏感",c:true},
+   {t:"Vth 不變；所有 cell 一樣",c:false},
+   {t:"Vth 上移；只有 SGD 受影響",c:false}],
+  ex:"Vpass 弱場使少量電子注入儲存層，Vth 緩慢上移；負 Vth 的 erased cell 跨 oxide 場相對最大故最敏感。屬可恢復（重抹再寫即還原）。"},
+
+ {q:"關於 3D charge-trap cell 的 program disturb，下列何者是反直覺但正確的？",cat:"reliability",opts:[
+   {t:"disturb 永遠讓 Vth 上升",c:false},
+   {t:"強 channel boosting 可能造成 soft erase，使 inhibit cell 的 Vth 下移",c:true},
+   {t:"program disturb 只發生在 2D",c:false},
+   {t:"program disturb 不影響 distribution",c:false}],
+  ex:"在 3D CTF，inhibit 時被 boost 的高 channel 電位可能把電子拉出儲存層（soft erase），造成 Vth downshift——與 read disturb 方向相反。FA 看到 inhibit 區 Vth 下移時要往這想。"},
+
+ {q:"為什麼 3D charge-trap NAND 的 retention 壽命不能用單一 activation energy 從高溫加速外推？",cat:"reliability",opts:[
+   {t:"因為溫度不影響電荷漏失",c:false},
+   {t:"charge loss 與溫度呈非線性（兩段 Ea），機制隨溫度切換，單段外推會高估壽命",c:true},
+   {t:"因為高溫資料不可靠",c:false},
+   {t:"因為 2D 與 3D 完全相同",c:false}],
+  ex:"3D CTF/SONOS 的 Vth shift vs 溫度非線性：高溫由 thermal emission、低溫由 band-to-band/橫向遷移主導。單一 Ea 外推到低溫會嚴重高估壽命，低於 90°C 需用低溫長時間（數週）資料驗證。"},
+
+ {q:"Cross-temperature read 指的是什麼現象？需要的對策是？",cat:"reliability",opts:[
+   {t:"寫入與讀取溫度不同造成 Vth 偏移，需要 read level 溫度補償",c:true},
+   {t:"讀取會升高晶片溫度",c:false},
+   {t:"高溫時無法讀取",c:false},
+   {t:"只發生在 NOR",c:false}],
+  ex:"不同溫度下 cell 的 Vth 會整體平移，若寫入溫度與讀取溫度差距大，read level 不補償就會誤判。controller 通常依溫度動態調整 read reference。"},
+
+ {q:"3D NAND 因一條 BL 接多個 SGD（DSL_1..N）而新增的 program disturb 模式中，最棘手的是？",cat:"reliability",opts:[
+   {t:"X mode（與 2D 相同）",c:false},
+   {t:"Y mode：BL 接地、DSL off，boosting 可能透過較大的 3D DSL leakage 漏掉",c:true},
+   {t:"完全沒有新模式",c:false},
+   {t:"XY mode 比 X 更嚴重",c:false}],
+  ex:"3D 多出 Y 與 XY 模式。XY（BL=Vcc, DSL off）不比 X 嚴重；但 Y（BL 接地、DSL off）因 3D DSL leakage 較大，可能讓 boosting 電位透過 DSL 漏掉，最需要注意。"},
+
+ {q:"P/E cycling 對 tunnel oxide 的主要傷害機制是？",cat:"reliability",opts:[
+   {t:"oxide 變厚",c:false},
+   {t:"trap 累積（trapping/detrapping）、SILC 增加，使 Vth window 漂移、retention 變差",c:true},
+   {t:"cell 面積縮小",c:false},
+   {t:"完全沒有傷害",c:false}],
+  ex:"反覆高場使 tunnel oxide 內生成 trap，造成 trapping/detrapping、stress-induced leakage current（SILC），Vth window 漂移、retention 惡化，達 endurance 上限。屬趨永久損傷。"},
+
+ {q:"CTCI（cell-to-cell interference）在 3D 改用 SiN charge trap 後是否消失？",cat:"reliability",opts:[
+   {t:"完全消失",c:false},
+   {t:"仍存在：鄰近 WL 儲存的電子仍影響本 cell channel 電位，使 distribution 展寬",c:true},
+   {t:"只在 SLC 出現",c:false},
+   {t:"變成 read disturb",c:false}],
+  ex:"即使儲存材料從 FG 換成 SiN，鄰近 cell 電荷對本 cell channel 電位的影響仍在，distribution 因此展寬，是 distribution 工程要持續對抗的雜訊源。"},
+
+ {q:"下列哪一種 reliability 現象屬於『可恢復、非永久損傷』？",cat:"reliability",opts:[
+   {t:"endurance cycling 導致的 oxide trap",c:false},
+   {t:"read disturb",c:true},
+   {t:"oxide breakdown",c:false},
+   {t:"金屬遷移",c:false}],
+  ex:"read disturb 只是電荷暫時注入，erase 後重寫即還原，不留永久 oxide 損傷；endurance 累積的 trap 與 breakdown 則趨於永久。"},
+
+ {q:"2D NAND 微縮撞牆的主因不包含下列何者？",cat:"2D/3D",opts:[
+   {t:"floating gate 之間耦合過強",c:false},
+   {t:"電子數統計漲落 / RTN 使 distribution 失控",c:false},
+   {t:"intra-WL 電場升高、bit error 率上升",c:false},
+   {t:"晶圓直徑無法再放大",c:true}],
+  ex:"逼近 1x nm 時，FG 間耦合、RTN/電子統計漲落、cell 間電場升高都讓 distribution 失控，迫使轉向 3D。晶圓尺寸與此微縮極限無關。"},
+
+ {q:"3D NAND 提升密度的主要手段是？",cat:"2D/3D",opts:[
+   {t:"持續縮小平面線寬",c:false},
+   {t:"垂直堆疊更多 WL 層（Z 方向）",c:true},
+   {t:"提高工作電壓",c:false},
+   {t:"使用更大的封裝",c:false}],
+  ex:"3D 放棄平面微縮，改以堆疊層數（128/176/200+ 層）增加密度，並搭配層間 pitch 微縮；Z 堆疊是目前主要的 scaling enabler。"},
+
+ {q:"Gate-all-around（GAA）在 3D NAND 帶來的物理好處包含？",cat:"2D/3D",opts:[
+   {t:"較佳 subthreshold slope、較低 leakage，且因曲率使 tunnel oxide 電場更高、P/E 效率提升",c:true},
+   {t:"完全消除 read disturb",c:false},
+   {t:"使 cell 不需要 ECC",c:false},
+   {t:"降低 channel hole 蝕刻難度",c:false}],
+  ex:"環繞 gate 改善次臨界特性與漏電；小曲率半徑使 tunnel oxide 內場增強，P/E 更有效。但代價是高 AR channel hole，蝕刻反而更難。"},
+
+ {q:"Floating gate 與 charge trap 在『電荷是否可流動』上的差別是？",cat:"CT/FG",opts:[
+   {t:"FG 電荷可在導電浮閘內自由移動；CT 電荷被陷在絕緣 SiN 中不流動",c:true},
+   {t:"兩者電荷都不流動",c:false},
+   {t:"FG 不流動、CT 流動",c:false},
+   {t:"兩者電荷都自由流動",c:false}],
+  ex:"FG 是導電 poly-Si，電荷自由移動，故 cell 間必須物理切開；CT 的 SiN 是絕緣陷阱層，電荷被局部釘住，可連續共用儲存層。"},
+
+ {q:"為什麼 charge trap cell 對單一缺陷的容忍度比 floating gate 高？",cat:"CT/FG",opts:[
+   {t:"CT 不會有缺陷",c:false},
+   {t:"FG 導電，一條漏電路徑就讓整個浮閘電荷流失；CT 電荷局部釘住，單缺陷只損局部電荷",c:true},
+   {t:"CT 的電荷量比較多",c:false},
+   {t:"FG 有 ECC、CT 沒有",c:false}],
+  ex:"FG 是單一導電節點，任一漏電路徑會放掉整個 FG 的電荷；CT 的電荷分散釘在各 trap，單一缺陷只影響鄰近局部電荷，整體較 robust。"},
+
+ {q:"關於 charge trap cell 的 short-term retention，下列何者正確？",cat:"CT/FG",opts:[
+   {t:"比 FG 更穩定，幾乎不漏",c:false},
+   {t:"相對較弱，受 lateral migration、vertical relaxation、TAT 等快速 detrapping 影響",c:true},
+   {t:"與溫度完全無關",c:false},
+   {t:"只在 2D 出現",c:false}],
+  ex:"CT 的短期 retention 是其弱點：LM（橫向遷移）、VR（縱向鬆弛）、TAT（去陷阱）以及 BE-tunnel 近 channel trap 的快速 detrapping 都會讓 Vth 短時間內漂移。"},
+
+ {q:"CT cell 用來補救 retention 弱點的結構手段，下列何者正確？",cat:"CT/FG",opts:[
+   {t:"用 band-engineered tunnel dielectric 增強 hole injection，high-k/metal gate 抑制電子 back-tunneling",c:true},
+   {t:"把 SiN 換成金屬",c:false},
+   {t:"取消 tunnel oxide",c:false},
+   {t:"提高工作溫度",c:false}],
+  ex:"BE-tunnel dielectric 在 erase 時增強 hole injection；high-k/metal gate 抑制 gate 端電子 back-tunneling，兩者共同改善 CT 的 retention 與 erase 行為。"},
+
+ {q:"3D NAND 的 RG（replacement gate）製程，gate 是如何形成的？",cat:"製程",opts:[
+   {t:"直接沉積金屬 gate 一次成形",c:false},
+   {t:"先堆 oxide/nitride，蝕 channel hole 與成膜後，抽掉 nitride 再回填金屬（如 W）形成 WL",c:true},
+   {t:"用離子佈植形成",c:false},
+   {t:"用氧化矽當 gate",c:false}],
+  ex:"RG 流程先堆 oxide/nitride 交替層、做 channel hole 與 ONO/channel poly，再選擇性抽除 nitride（成為 sacrificial），回填金屬形成 word line。這是 charge-trap 3D 的主流整合方式。"},
+
+ {q:"3D NAND 的 channel hole 蝕刻為什麼是良率瓶頸？",cat:"製程",opts:[
+   {t:"因為它最便宜",c:false},
+   {t:"層數越高 aspect ratio 越大，孔形（彎曲、上下直徑差）直接影響各層 cell 一致性",c:true},
+   {t:"因為它不需要光罩",c:false},
+   {t:"因為它與 cell 無關",c:false}],
+  ex:"一次蝕穿所有層的高 AR channel hole 極難控制，孔的彎曲與上下直徑差異會造成 layer-dependent 的 cell 特性差異，是 3D 良率主戰場。"},
+
+ {q:"CuA（CMOS under Array）相對 CoA（CMOS outside Array）的主要好處是？",cat:"製程",opts:[
+   {t:"把週邊 CMOS 放到 array 下方，省面積、可塞更多 plane 提升平行度",c:true},
+   {t:"降低工作電壓",c:false},
+   {t:"消除 read disturb",c:false},
+   {t:"讓 cell 變大",c:false}],
+  ex:"CoA 把 CMOS 放 array 旁邊，CMOS 越多 die 越大；CuA 把 CMOS 塞到 array 正下方，釋放面積給更多 page buffer / plane，提升平行度與面積效率。WoW 則更進一步分開製作再鍵合。"},
+
+ {q:"3D NAND 的 staircase（階梯）結構是為了什麼？",cat:"製程",opts:[
+   {t:"散熱",c:false},
+   {t:"讓每一層堆疊的 WL 都能拉出各自的接點",c:true},
+   {t:"增加儲存密度",c:false},
+   {t:"當作 ESD 保護",c:false}],
+  ex:"垂直堆疊的每層 WL 都要連到週邊電路，做成階梯狀讓每層露出接觸窗。staircase 區是面積與微影的額外成本。"},
+
+ {q:"下列哪個產品介面通常用『序列差動、全雙工、支援 command queue』，常用來取代 eMMC？",cat:"應用",opts:[
+   {t:"SATA",c:false},{t:"UFS",c:true},{t:"USB 2.0",c:false},{t:"NOR",c:false}],
+  ex:"UFS 採序列差動、全雙工並支援 command queue，延遲低、頻寬高，是行動裝置取代並列、半雙工 eMMC 的主流嵌入式介面。"},
+
+ {q:"SATA SSD 的主要瓶頸是什麼？",cat:"應用",opts:[
+   {t:"NAND cell 太慢",c:false},
+   {t:"SATA III 介面頻寬約 600 MB/s 已飽和、AHCI 單佇列、延遲高",c:true},
+   {t:"沒有 controller",c:false},
+   {t:"不支援 ECC",c:false}],
+  ex:"SATA SSD 受限於介面本身：SATA III ~600 MB/s 已被吃滿，且 AHCI 為單一命令佇列、延遲較高。要突破必須改走 PCIe/NVMe。"},
+
+ {q:"PCIe/NVMe SSD 相對 SATA SSD 的最大優勢來自？",cat:"應用",opts:[
+   {t:"更便宜",c:false},
+   {t:"直連 PCIe 高頻寬，NVMe 支援大量並行佇列、低延遲高 IOPS",c:true},
+   {t:"不需要散熱",c:false},
+   {t:"容量一定更大",c:false}],
+  ex:"NVMe over PCIe 提供數 GB/s 頻寬與多達數萬個命令佇列，能釋放 NAND 內部平行度，IOPS 與延遲遠勝 SATA；代價是功耗、發熱與成本較高。"},
+
+ {q:"做 FA 時，若只看 NAND die 而忽略 controller 策略，最容易犯什麼錯？",cat:"應用",opts:[
+   {t:"高估 read 速度",c:false},
+   {t:"把系統層 write amplification 造成的早夭，誤判為 cell 本質 endurance 不足",c:true},
+   {t:"忽略溫度",c:false},
+   {t:"算錯容量",c:false}],
+  ex:"controller 的 FTL（wear leveling、GC、OP、ECC 強度）會大幅改變實際壽命。忽略它會把系統層 write amplification 的後果錯歸給 cell 本質特性。"},
+
+ {q:"eMMC 與 UFS 在匯流排型態上的關鍵差異是？",cat:"應用",opts:[
+   {t:"eMMC 並列半雙工；UFS 序列差動全雙工",c:true},
+   {t:"兩者都用 PCIe",c:false},
+   {t:"eMMC 序列、UFS 並列",c:false},
+   {t:"兩者完全相同",c:false}],
+  ex:"eMMC 沿用並列匯流排（半雙工），高頻受 skew/SI 限制；UFS 改序列差動點對點、全雙工，頻寬與延遲都明顯改善。"},
+
+ {q:"Multi-level cell（MLC/TLC/QLC）相對 SLC 的本質取捨是？",cat:"操作",opts:[
+   {t:"用更多 Vth 階提高每 cell 容量，但 distribution margin 變窄、reliability/速度變差",c:true},
+   {t:"容量與可靠度同時提升",c:false},
+   {t:"只是換不同材料",c:false},
+   {t:"完全沒有缺點",c:false}],
+  ex:"增加 Vth 階數（4/8/16）可在同製程下提高密度，但相鄰 state 間 margin 變窄，對 disturb、retention、cross-temp 更敏感，讀寫也較慢、ECC 需求更高。"},
+
+ {q:"NAND read 把 string 是否導通對應到目標 cell 的什麼資訊？",cat:"操作",opts:[
+   {t:"cell 的物理位置",c:false},
+   {t:"目標 cell 的 Vth 是否低於施加的 Vr",c:true},
+   {t:"block 的溫度",c:false},
+   {t:"controller 的韌體版本",c:false}],
+  ex:"其他 WL 已被 Vpass 導通，string 通與不通只取決於被選 cell：Vth 低於 Vr 則導通（讀 1），高於 Vr 則不通（讀 0）。多階 cell 用多個 Vr 切割 Vth 軸。"},
+
+ {q:"關於『self-boosting』在 program inhibit 的角色，下列何者正確？",cat:"操作",opts:[
+   {t:"把 inhibit BL 的 channel 電位浮高，壓低跨 tunnel oxide 電場避免誤寫",c:true},
+   {t:"把要寫的 cell 電壓拉高",c:false},
+   {t:"加速 erase",c:false},
+   {t:"提升 read 速度",c:false}],
+  ex:"不寫的 BL 拉高、SGD 適當關閉，使該 channel 浮起並被 Vpass 耦合抬升，跨 tunnel oxide 的有效電場下降，避免不該寫的 cell 被誤寫。SGD Vth 過低會讓這個 boosting 漏掉。"},
+
+ {q:"FN tunneling 在 NAND 操作中扮演的角色是？",cat:"操作",opts:[
+   {t:"只在 read 使用",c:false},
+   {t:"program 把電子注入、erase 把電子拉出儲存層的主要傳輸機制",c:true},
+   {t:"只用於 SGD",c:false},
+   {t:"與電荷無關",c:false}],
+  ex:"NAND 的寫入與抹除主要靠 Fowler-Nordheim tunneling：強場下電子穿過 tunnel oxide 進出儲存層，改變 Vth。read 則不涉及電荷搬移。"},
+
+ {q:"distribution 工程的核心目標是什麼？",cat:"reliability",opts:[
+   {t:"讓所有 cell Vth 相同",c:false},
+   {t:"控制各 state 的 Vth distribution 位置與寬度，維持足夠 read margin",c:true},
+   {t:"提高工作電壓",c:false},
+   {t:"消除 ECC",c:false}],
+  ex:"任何 reliability 機制最終都表現為 distribution 漂移或展寬；工程目標是讓各 state 夠窄、間隔夠大，留住 read margin，把 bit error 壓在 ECC 可糾正範圍內。"},
+
+ {q:"下列何者最可能解釋『沿 pillar 上下（layer-dependent）的系統性 Vth 偏移』？",cat:"製程",opts:[
+   {t:"controller 韌體 bug",c:false},
+   {t:"channel hole 直徑隨深度漸縮，使上下 cell 的 gate-channel 幾何不同",c:true},
+   {t:"使用者操作錯誤",c:false},
+   {t:"BL 接觸不良",c:false}],
+  ex:"高 AR channel hole 通常上寬下窄，造成各層 cell 的曲率與 gate 控制力不同 → layer-dependent Vth。看到此類系統性偏移，先想製程幾何（hole profile）。"},
+
+ {q:"NAND 的 page 讀寫、block 抹除這種不對稱，導致 FTL 必須做什麼？",cat:"架構",opts:[
+   {t:"garbage collection（與 wear leveling 等）",c:true},
+   {t:"提高電壓",c:false},
+   {t:"關閉 ECC",c:false},
+   {t:"縮小 cell",c:false}],
+  ex:"因為不能就地覆寫、抹除單位大於寫入單位，FTL 必須做 logical-physical 映射、garbage collection 回收散落的有效 page、wear leveling 平均磨耗，這些都會放大 write amplification。"},
+
+ {q:"關於 NOR 與 NAND 的 cell size，下列敘述何者正確？",cat:"架構",opts:[
+   {t:"NOR ~10 F²、NAND ~4 F²，故 NAND 成本/bit 更低",c:true},
+   {t:"NOR 比 NAND 小",c:false},
+   {t:"兩者一樣大",c:false},
+   {t:"NAND ~10 F²",c:false}],
+  ex:"NAND 串聯共用接觸使等效 cell 約 4 F²，遠小於 NOR 的 ~10 F²，加上製程微縮節奏快，NAND 成為成本/bit 最低的半導體記憶體。"},
+
+ {q:"以下哪一項是 read disturb 的有效緩解手段？",cat:"reliability",opts:[
+   {t:"提高 Vpass",c:false},
+   {t:"ECC/LDPC 加 read refresh（達門檻後重寫）與 Vpass 優化",c:true},
+   {t:"增加 read 次數",c:false},
+   {t:"取消 verify",c:false}],
+  ex:"read disturb 隨 read 次數與 Vpass 升高而惡化，故緩解方向是降低有效 Vpass 應力、用強 ECC 容錯，並在累積讀取達門檻時 refresh（重抹重寫）。提高 Vpass 反而惡化。"},
+
+ {q:"在 Vth distribution 圖上，retention 失效通常表現為？",cat:"reliability",opts:[
+   {t:"programmed state 整體往低 Vth 漂移並展寬，可能跨過 read level",c:true},
+   {t:"distribution 完全消失",c:false},
+   {t:"所有 state 往高 Vth 移",c:false},
+   {t:"只有 erase state 改變",c:false}],
+  ex:"電荷漏失使已寫入 state 的 Vth 下移、因漏失速率不均而展寬，當尾巴跨過相鄰 read level 就產生 bit error。這與 read disturb 的上移方向相反。"},
+
+ {q:"關於 body erase 的偏壓條件，下列何者正確？",cat:"操作",opts:[
+   {t:"channel/well 拉到高電位（~20V）、WL 接 0V，靠強場 FN 把電子拉回 channel",c:true},
+   {t:"WL 加高電壓、channel 接地",c:false},
+   {t:"BL 與 SL 都浮接",c:false},
+   {t:"只升高 SGD",c:false}],
+  ex:"body erase 直接把 channel/body 偏到約 20V，WL 接 0V 形成跨 tunnel oxide 的強反向場，電子 FN tunneling 回 channel，整 block Vth 降到 erase state。"},
+
+ {q:"為什麼說『架構取捨會一路傳遞到 reliability』？以 read disturb 為例。",cat:"架構",opts:[
+   {t:"因為 NAND 串聯，read 必須對未選 WL 加 Vpass 無條件導通，而這個 Vpass 正是 read disturb 來源",c:true},
+   {t:"因為 NAND 不用 ECC",c:false},
+   {t:"因為 NOR 沒有 reliability 問題",c:false},
+   {t:"因為兩者架構相同",c:false}],
+  ex:"串聯架構迫使 read 對非目標 cell 加 Vpass 導通，這個必要的 pass 電壓就構成 read disturb 應力。架構上的根本取捨，會在 reliability 層面顯現後果。"},
+
+ {q:"QLC 相對 TLC 在 reliability 上的主要劣勢是？",cat:"reliability",opts:[
+   {t:"16 個 state 擠在同樣 Vth 窗，相鄰 margin 更窄、對 disturb/retention/cross-temp 更敏感",c:true},
+   {t:"完全沒有差別",c:false},
+   {t:"QLC 不需要 ECC",c:false},
+   {t:"QLC 速度更快",c:false}],
+  ex:"QLC 用 16 階塞進有限 Vth 窗，state 間 margin 比 TLC 更窄，任何漂移/展寬都更易跨越 read level，故對所有 reliability 機制更敏感，通常需更強 ECC 與更頻繁 refresh。"},
+
+ {q:"GAA 環繞造成『tunnel oxide 電場更高』的物理原因是？",cat:"2D/3D",opts:[
+   {t:"曲率半徑小，圓柱 channel 表面電場集中（curvature 效應）",c:true},
+   {t:"因為溫度較高",c:false},
+   {t:"因為電壓更高",c:false},
+   {t:"因為 channel 較長",c:false}],
+  ex:"圓柱形 channel 外圍曲率半徑小，相同偏壓下表面電場較平面結構集中，使 tunnel oxide 內有效電場升高，program/erase 效率提升——這是 GAA 的內生優勢之一。"},
+
+ {q:"WoW（wafer-on-wafer）架構的主要動機是？",cat:"製程",opts:[
+   {t:"把 CMOS 與 array 各自在獨立 wafer 最佳化製程後鍵合，兼顧兩者最佳化與面積",c:true},
+   {t:"降低工作溫度",c:false},
+   {t:"取代 ECC",c:false},
+   {t:"讓 cell 變小",c:false}],
+  ex:"array 與 CMOS 的製程需求不同，WoW 用兩片專用 wafer 分別最佳化（CMOS 在獨立 wafer 走最佳互連/元件流程）再鍵合，比 CuA 更進一步釋放面積與製程彈性。"},
+
+ {q:"以下對『trapping/detrapping 造成的 Vth 變化』描述，何者正確？",cat:"reliability",opts:[
+   {t:"program 時電子被 oxide trap 捕獲累積負電荷使 Vth 偏移；受熱可去陷阱造成 Vth 反向變化",c:true},
+   {t:"與溫度無關",c:false},
+   {t:"只發生在 read",c:false},
+   {t:"只影響 SGD",c:false}],
+  ex:"oxide trap 捕獲電子會改變 cell Vth；熱激發可讓被陷電子越過能障逸出（detrapping），造成 Vth 反向漂移。其總量是溫度、cycle 間隔時間與 P/E 次數的函數。"},
+
+ {q:"綜合判斷：FA 看到某 block『inhibit 區 cell 的 Vth 異常下移』，最該優先考慮的機制是？",cat:"reliability",opts:[
+   {t:"read disturb（Vth 上移）",c:false},
+   {t:"3D CTF 的 program-disturb soft erase（強 boosting 把電子拉出儲存層）",c:true},
+   {t:"endurance breakdown",c:false},
+   {t:"cross-temperature 補償正確",c:false}],
+  ex:"inhibit 區（被 boost 的 cell）出現 Vth 下移，方向與 read disturb（上移）相反，正是 3D charge-trap 在強 channel boosting 下 soft erase 的特徵，應優先朝 program disturb 的這個方向查。"}
+];
+
+/* ============ Quiz engine ============ */
+(function(){
+  var startBtn=document.getElementById('startBtn'),
+      submitBtn=document.getElementById('submitBtn'),
+      revealBtn=document.getElementById('revealBtn'),
+      meta=document.getElementById('quizMeta'),
+      body=document.getElementById('quizBody'),
+      hint=document.getElementById('quizHint'),
+      score=document.getElementById('scorecard');
+  var current=[]; var answered=false;
+
+  function shuffle(a){a=a.slice();for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=a[i];a[i]=a[j];a[j]=t;}return a;}
+
+  function build(){
+    answered=false;
+    score.classList.remove('show'); score.innerHTML='';
+    hint.style.display='none';
+    current = shuffle(QUESTIONS).slice(0,10).map(function(q){
+      return {q:q.q, cat:q.cat, ex:q.ex, opts:shuffle(q.opts)};
+    });
+    var html='';
+    current.forEach(function(item,i){
+      html+='<div class="q-card" data-qi="'+i+'">';
+      html+='<span class="q-num">Q'+(i+1)+'</span><span class="q-cat">'+item.cat+'</span>';
+      html+='<div class="q-text">'+item.q+'</div>';
+      item.opts.forEach(function(o,oi){
+        html+='<label class="opt"><input type="radio" name="q'+i+'" value="'+oi+'"><span>'+o.t+'</span></label>';
+      });
+      html+='<div class="explain"><div class="h">詳解</div>'+item.ex+'</div>';
+      html+='</div>';
+    });
+    body.innerHTML='<div class="scorecard" id="scorecard2"></div>'+html;
+    score=document.getElementById('scorecard2');
+    // selection visual
+    body.querySelectorAll('.opt input').forEach(function(inp){
+      inp.addEventListener('change',function(){
+        var card=inp.closest('.q-card');
+        card.querySelectorAll('.opt').forEach(function(l){l.classList.remove('sel');});
+        inp.closest('.opt').classList.add('sel');
+      });
+    });
+    meta.textContent='作答中 · 共 10 題';
+    submitBtn.disabled=false; revealBtn.disabled=false;
+    startBtn.textContent='重新抽題';
+    window.location.hash='c8';
+  }
+
+  function lockAndShow(showScore){
+    var correctCount=0;
+    current.forEach(function(item,i){
+      var card=body.querySelector('[data-qi="'+i+'"]');
+      var chosen=card.querySelector('input[name="q'+i+'"]:checked');
+      card.querySelectorAll('.opt').forEach(function(l){l.classList.add('locked');});
+      item.opts.forEach(function(o,oi){
+        var label=card.querySelectorAll('.opt')[oi];
+        if(o.c){label.classList.add('correct');}
+      });
+      if(chosen){
+        var ci=parseInt(chosen.value,10);
+        if(item.opts[ci].c){correctCount++;}
+        else{card.querySelectorAll('.opt')[ci].classList.add('wrong');}
+      }
+      card.querySelector('.explain').classList.add('show');
+    });
+    answered=true; submitBtn.disabled=true; revealBtn.disabled=true;
+    if(showScore){
+      var pct=Math.round(correctCount/10*100);
+      var verdict = pct>=90?'Senior 等級 · 機制掌握扎實':pct>=70?'進階中 · 再鞏固 reliability 機制':pct>=50?'基礎成形 · 多看詳解的「為什麼」':'從第 3、4 章的物理機制重讀起';
+      score.innerHTML='<div class="big">'+correctCount+' / 10</div><div class="lab">正確率 '+pct+'% — '+verdict+'</div>';
+      score.classList.add('show');
+      meta.textContent='已交卷 · '+correctCount+'/10';
+    }else{
+      meta.textContent='已顯示答案';
+    }
+    score.scrollIntoView({behavior:'smooth',block:'center'});
+  }
+
+  startBtn.addEventListener('click',build);
+  submitBtn.addEventListener('click',function(){if(!answered)lockAndShow(true);});
+  revealBtn.addEventListener('click',function(){if(!answered)lockAndShow(false);});
+})();
+</script>
+</body>
+</html>

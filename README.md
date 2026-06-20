@@ -4,9 +4,10 @@
 
 | 檔案 | 內容 |
 |---|---|
-| `index.html` | 入口頁,兩個選項:示波器操作原理 / FLH Interface |
+| `index.html` | 入口頁,三個選項:示波器操作原理 / FLH Interface / NAND Flash 元件養成 |
 | `scope.html` | 示波器操作原理(泰克 × Keysight,Flash / SSD 量測導向) |
-| `flh.html` | FLH Device Engineering 養成手冊(新人 → Senior) |
+| `flh.html` | FLH Device Engineering 養成手冊(介面 / 操作面,新人 → Senior) |
+| `flash.html` | NAND Flash 元件養成手冊(元件物理面,新人 → Senior) |
 
 兩個子頁左上 / 導覽列都有「← 回到入口」按鈕。
 
