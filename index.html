@@ -868,6 +868,17 @@ const menuBtn=document.getElementById('menuBtn'),navLinks=document.getElementByI
 menuBtn.addEventListener('click',()=>navLinks.classList.toggle('open'));
 navLinks.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>navLinks.classList.remove('open')));
 
+/* ============ learning-path tabs (小白 / 進階 / 專家) ============ */
+document.querySelectorAll('.tabs').forEach(tabs=>{
+  const panels=tabs.parentElement.querySelectorAll('.lvl');
+  tabs.addEventListener('click',e=>{
+    const b=e.target.closest('.tab');if(!b)return;
+    const lvl=b.dataset.lvl;
+    tabs.querySelectorAll('.tab').forEach(t=>t.classList.toggle('on',t===b));
+    panels.forEach(p=>p.classList.toggle('on',p.dataset.lvl===lvl));
+  });
+});
+
 const reduce=window.matchMedia('(prefers-reduced-motion:reduce)').matches;
 const C={bg:'#060A0E',grid:'#13303A',gridB:'#1C4350',phos:'#2BE6C9',tek:'#3E9BFF',key:'#FF5470',amber:'#FFB23E',muted:'#5A6678'};
 
