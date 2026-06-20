@@ -777,6 +777,27 @@ footer .mono{font-family:var(--mono)}
         <a class="src" href="https://www.allpcb.com/allelectrohub/onfi-nand-flash-interface-explained" target="_blank">ONFI 5.x — VrefQ / 寫校準</a>
       </div>
     </div>
+
+    <h3 style="margin-top:30px;font-size:22px">👁️ vs 🟩 眼圖 與 Shmoo 到底差在哪?</h3>
+    <p class="lead" style="margin:8px 0 18px">兩個都在看「訊號好不好、裕度夠不夠」,但<b style="color:var(--phos)">量的東西完全不同</b>:眼圖畫的是「訊號本身」,Shmoo 畫的是「測試結果」。</p>
+    <div class="cmp">
+      <table>
+        <thead>
+          <tr><th>面向</th><th style="color:var(--phos)">眼圖 Eye Diagram</th><th style="color:var(--good)">Shmoo 掃描窗 Scan Window</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>本質</td><td>把大量<b>實際位元波形</b>疊在一個位元週期 (UI) 上</td><td>在不同<b>參數設定</b>下逐點測 <b>PASS / FAIL</b> 的地圖</td></tr>
+          <tr><td>資料怎麼來</td><td>示波器<b>直接量到的類比波形</b>疊加</td><td>反覆<b>掃參數</b>(改取樣相位、改 Vref)讀寫,記錄通過與否</td></tr>
+          <tr><td>X 軸 / Y 軸</td><td>X = 時間、Y = 電壓(連續的類比量)</td><td>X = 取樣相位、Y = Vref 電壓門檻(離散的設定點)</td></tr>
+          <tr><td>看什麼</td><td>眼睛張開程度 = 抖動 (jitter) + 雜訊裕度 → 訊號<b>類比品質</b></td><td>綠色開口大小 = 時序 × 電壓的<b>有效資料窗</b> → 操作裕度</td></tr>
+          <tr><td>結果長相</td><td>電壓對時間的疊影圖(像眼睛)</td><td>一格格 pass / fail 的方格圖(像棋盤)</td></tr>
+          <tr><td>誰產生</td><td>示波器 / 取樣示波器</td><td>控制器或測試程式(DQ / Vref training、良率分析)</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="callout" style="margin-top:16px">
+      <p>🧠 <b>一句話分辨</b>:<b style="color:var(--phos)">眼圖</b>是「把<b>訊號本身</b>畫出來」,反映類比品質(邊緣糊不糊、雜訊大不大);<b style="color:var(--good)">Shmoo</b>是「把<b>測試結果</b>畫出來」,反映操作裕度,用來找置中的最佳取樣點。<br>🔗 <b>關聯</b>:眼圖開得越大,對應的 Shmoo 綠色窗通常也越大;DQ / Vref training 的目標就是把取樣點移到 Shmoo 窗正中央,也等於對到眼圖最開的地方。</p>
+    </div>
   </div>
 </section>
 
