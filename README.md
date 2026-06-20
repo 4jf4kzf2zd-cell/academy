@@ -1,6 +1,14 @@
-# 示波器學院 · 泰克 × Keysight 教學
+# 工程教學入口 · Engineering Academy
 
-單檔互動式教學網頁(Flash / SSD 量測導向)。整個網站就是一個 `index.html`,純靜態、零相依套件,可直接託管。
+純靜態、零相依套件的互動式教學網站,可直接託管。結構是「**入口頁 + 兩個子頁**」:
+
+| 檔案 | 內容 |
+|---|---|
+| `index.html` | 入口頁,兩個選項:示波器操作原理 / FLH Interface |
+| `scope.html` | 示波器操作原理(泰克 × Keysight,Flash / SSD 量測導向) |
+| `flh.html` | FLH Device Engineering 養成手冊(新人 → Senior) |
+
+兩個子頁左上 / 導覽列都有「← 回到入口」按鈕。
 
 ---
 
