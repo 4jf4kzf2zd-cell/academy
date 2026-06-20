@@ -319,6 +319,7 @@ footer .mono{font-family:var(--mono)}
       <a href="#roadmap">學習路徑</a>
       <a href="#specs">核心規格</a>
       <a href="#probe">探棒</a>
+      <a href="#howto">操作步驟</a>
       <a href="#sim">操作模擬</a>
       <a href="#glossary">名詞</a>
       <a href="#flash">Flash/SSD</a>
@@ -553,11 +554,41 @@ footer .mono{font-family:var(--mono)}
   </div>
 </section>
 
+<!-- ========== 操作步驟 ========== -->
+<section id="howto">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="sec-num">06 — HOW TO USE</div>
+      <h2>實機操作步驟:從開機到讀數</h2>
+      <p class="lead">第一次拿到示波器,照這 9 步做一遍就會了。每一步都標出「對應面板上的哪個鈕」,做完就能在下一節的模擬器上練。</p>
+    </div>
+
+    <div class="step"><span class="n">1</span><div><h4>開機 + 選通道(Power on / Channel)</h4><p>開電源,按下要用的通道鍵(CH1)讓它亮起。多數訊號用一個通道就夠。</p></div></div>
+    <div class="step"><span class="n">2</span><div><h4>接探棒 + 做補償(Probe + Compensation)</h4><p>探棒接到 CH1,夾到面板上的「方波校準(PROBE COMP)」端子,轉探棒上的小螺絲,讓方波頂部變成乾淨的直角。沒補償,量到的邊緣是錯的。</p></div></div>
+    <div class="step"><span class="n">3</span><div><h4>探頭接到待測點(Probing)</h4><p>探針鉤住訊號點、鱷魚夾接到電路接地。地線越短越好,否則高速訊號會多出振鈴(ringing)。</p></div></div>
+    <div class="step"><span class="n">4</span><div><h4>按 Autoset 讓波形跳出來(Autoset)</h4><p>找不到波形時先按 <b>Autoset</b> 自動鍵,示波器會自動把垂直、水平、觸發設到看得到波形的範圍。先有畫面,再手動微調。</p></div></div>
+    <div class="step"><span class="n">5</span><div><h4>調垂直 V/div + 位置(Vertical)</h4><p>轉「每格電壓(V/div)」讓波形上下約佔 6 格(別超出螢幕),再用垂直位置鈕把波形移到畫面中間。佔滿越多格、讀數越準。</p></div></div>
+    <div class="step"><span class="n">6</span><div><h4>調水平時基 s/div(Horizontal)</h4><p>轉「時基(s/div)」讓螢幕剛好顯示 2~3 個週期 —— 太擠看不清邊緣,太鬆看不到細節。</p></div></div>
+    <div class="step"><span class="n">7</span><div><h4>設定觸發:邊緣 + 準位(Trigger / Edge / Level)</h4><p>觸發源選 CH1、類型選「邊緣」,把「觸發準位」轉到波形高低點中間。畫面一定住,代表觸發成功;若波形一直左右亂跑,八成是準位拉到波形範圍外了。</p></div></div>
+    <div class="step"><span class="n">8</span><div><h4>開自動量測讀數(Measure)</h4><p>按 <b>Measure</b> 加入要看的量測:峰對峰電壓(Vpp)、頻率、週期、上升時間。先相信儀器,再學會用「格數 × 每格值」自己驗算。</p></div></div>
+    <div class="step"><span class="n">9</span><div><h4>(進階)存波形 / 截圖(Save / Screenshot)</h4><p>用 Save/Recall 或截圖把畫面與設定存到 USB,方便做報告或事後比對。</p></div></div>
+
+    <div class="callout" style="margin-top:18px">
+      <p>🧭 <b>一句話記法</b>:<span class="pill">接好 → Autoset → 調垂直 → 調水平 → 設觸發 → 量測</span>。波形亂跑先想「觸發準位」,波形太小先想「V/div」,看不到完整週期先想「時基」。</p>
+    </div>
+    <div class="src-row">
+      <span class="lab">資料來源</span>
+      <a class="src" href="https://www.tek.com/en/documents/primer/xyzs-oscilloscopes-primer" target="_blank">Tektronix — XYZs of Oscilloscopes</a>
+      <a class="src" href="https://www.keysight.com/us/en/products/oscilloscopes.html" target="_blank">Keysight — Oscilloscope Fundamentals</a>
+    </div>
+  </div>
+</section>
+
 <!-- ========== 操作模擬 ========== -->
 <section id="sim">
   <div class="wrap">
     <div class="sec-head">
-      <div class="sec-num">06 — HANDS ON</div>
+      <div class="sec-num">07 — HANDS ON</div>
       <h2>互動操作模擬器</h2>
       <p class="lead">這就像一台練習用示波器。換訊號、轉時基、拉 V/div、調觸發,右邊的自動量測會跟著變。先玩到「波形定住、填滿螢幕」就成功了。</p>
     </div>
@@ -593,6 +624,19 @@ footer .mono{font-family:var(--mono)}
       </div>
     </div>
     <div class="hint" id="simHint" style="margin-top:14px">💡 提示:把時基轉到讓螢幕剛好顯示 2~3 個週期,最容易判讀。觸發準位拉超出波形範圍,畫面就會開始亂跑(失去觸發)。</div>
+
+    <div class="sec-num" style="margin-top:30px">面板參數速查 · PANEL CHEAT-SHEET</div>
+    <p class="lead" style="margin:8px 0 16px">上面面板每個標籤是什麼意思、物理上代表什麼?(中英對照)</p>
+    <div class="grid g4">
+      <div class="card"><div class="ic">WAVEFORM · 訊號類型</div><h3>波形種類</h3><p><b>正弦 Sine wave</b>:只有單一頻率的交流訊號。<b>方波 Square wave</b>:在高/低電位間切換,含基頻 + 大量奇次諧波,常用來看上升邊緣與頻寬。<b>脈衝 Pulse</b>:短暫的突波,用來抓 glitch / 單次事件。</p></div>
+      <div class="card"><div class="ic">TIME BASE · s/div</div><h3>時基</h3><p>水平方向「每一格」代表多少時間。整個螢幕的時間窗 = s/div × 10 格。轉小 → 看更快的細節。</p></div>
+      <div class="card"><div class="ic">VOLTS/div · V/div</div><h3>每格電壓</h3><p>垂直方向「每一格」代表多少電壓。垂直總量程 = V/div × 8 格。縮放它把波形剛好塞進螢幕。</p></div>
+      <div class="card"><div class="ic">TRIGGER LEVEL</div><h3>觸發準位</h3><p>觸發用來比較的「電壓門檻」。當訊號(依設定的邊緣方向)穿越這個準位時,示波器就對齊重畫一次,波形才會定住不亂跑。</p></div>
+      <div class="card"><div class="ic">Vpp · PEAK-TO-PEAK</div><h3>峰對峰電壓</h3><p>波形最高點到最低點的電壓差:Vpp = Vmax − Vmin。代表訊號的整體振幅大小。</p></div>
+      <div class="card"><div class="ic">FREQUENCY · Hz</div><h3>頻率</h3><p>訊號每秒重複幾個週期,單位赫茲 Hz。與週期互為倒數:<b>f = 1 / T</b>。</p></div>
+      <div class="card"><div class="ic">PERIOD · s</div><h3>週期</h3><p>一個完整波形重複一次所花的時間。與頻率互為倒數:<b>T = 1 / f</b>。</p></div>
+      <div class="card"><div class="ic">TRIGGER STATUS</div><h3>觸發狀態</h3><p><b>穩定 Triggered</b>:條件滿足、波形鎖定不動。<b>失去觸發 Untriggered</b>:條件沒滿足(例如準位拉出波形範圍),畫面開始漂移亂跑。</p></div>
+    </div>
   </div>
 </section>
 
@@ -600,7 +644,7 @@ footer .mono{font-family:var(--mono)}
 <section id="glossary">
   <div class="wrap">
     <div class="sec-head">
-      <div class="sec-num">07 — GLOSSARY</div>
+      <div class="sec-num">08 — GLOSSARY</div>
       <h2>名詞獨立解釋區</h2>
       <p class="lead">小白最怕的就是滿天術語。這裡每個名詞都拆開、用白話 + 一個例子講清楚。點開看。</p>
     </div>
@@ -637,7 +681,7 @@ footer .mono{font-family:var(--mono)}
 <section id="flash">
   <div class="wrap">
     <div class="sec-head">
-      <div class="sec-num">08 — FLASH / SSD</div>
+      <div class="sec-num">09 — FLASH / SSD</div>
       <h2>Flash / SSD 實戰量測</h2>
       <p class="lead">這是你工作真正要碰的部分。NAND 介面速度越來越快、電壓越來越低,訊號完整性(SI)成了良率的關鍵戰場。</p>
     </div>
@@ -740,7 +784,7 @@ footer .mono{font-family:var(--mono)}
 <section id="compare">
   <div class="wrap">
     <div class="sec-head">
-      <div class="sec-num">09 — TEK vs KEYSIGHT</div>
+      <div class="sec-num">10 — TEK vs KEYSIGHT</div>
       <h2>泰克 vs Keysight,怎麼選?</h2>
       <p class="lead">兩家都是頂尖品牌,沒有絕對的好壞,只有「適不適合你的場景」。下表整理常被拿來比較的面向。</p>
     </div>
@@ -794,7 +838,7 @@ footer .mono{font-family:var(--mono)}
 <section id="faq">
   <div class="wrap">
     <div class="sec-head">
-      <div class="sec-num">10 — FAQ</div>
+      <div class="sec-num">11 — FAQ</div>
       <h2>常見問答</h2>
       <p class="lead">新手最常問的問題,直接回答。</p>
     </div>
@@ -806,7 +850,7 @@ footer .mono{font-family:var(--mono)}
 <section id="myth">
   <div class="wrap">
     <div class="sec-head">
-      <div class="sec-num">11 — MYTHS</div>
+      <div class="sec-num">12 — MYTHS</div>
       <h2>迷思破解</h2>
       <p class="lead">這些「聽起來很合理」的觀念,其實是錯的。</p>
     </div>
@@ -818,7 +862,7 @@ footer .mono{font-family:var(--mono)}
 <section id="refs">
   <div class="wrap">
     <div class="sec-head">
-      <div class="sec-num">12 — REFERENCES</div>
+      <div class="sec-num">13 — REFERENCES</div>
       <h2>完整資料來源</h2>
       <p class="lead">本教材每個原理的依據,大多來自泰克與 Keysight 官方教材與技術文件。點擊可直接前往原始出處。</p>
     </div>
@@ -831,7 +875,7 @@ footer .mono{font-family:var(--mono)}
 <section id="quiz">
   <div class="wrap">
     <div class="sec-head">
-      <div class="sec-num">13 — QUIZ</div>
+      <div class="sec-num">14 — QUIZ</div>
       <h2>隨機考題:測測你的程度</h2>
       <p class="lead">題庫共 54 題,依<b style="color:var(--phos)">新手 → 資深 → 專家</b>順序出題,每級各隨機抽 4 題(共 12 題)。每次抽到的題目都不同,選完立刻顯示<b style="color:var(--phos)">正確或錯誤</b>並附詳解。不計分,只幫你確認觀念對不對。</p>
     </div>
@@ -1206,6 +1250,10 @@ const terms=[
   ['觸發','Trigger','決定「從哪個條件開始畫」,讓重複波形定在同一位置不亂跑。','例:設「上升緣、準位 0 V」,每次訊號往上穿過 0 V 就對齊一次。','n'],
   ['時基','Time base','水平方向每一格代表多少時間 (s/div)。','例:200 ns/div × 10 格 = 整個螢幕顯示 2 µs 的時間窗。','n'],
   ['每格電壓','Volts/div','垂直方向每一格代表多少電壓。縮放它來把波形塞進螢幕。','例:500 mV/div × 8 格 = 垂直總範圍 4 V (±2 V)。','n'],
+  ['峰對峰電壓','Vpp · Peak-to-Peak Voltage','波形最高點到最低點的電壓差 (Vmax − Vmin),代表訊號整體振幅。','例:正弦波從 +1.2 V 到 −1.2 V,Vpp = 2.4 V。','n'],
+  ['頻率','Frequency','訊號每秒重複幾個週期,單位 Hz,與週期互為倒數 f = 1/T。','例:週期 400 ns 的訊號,頻率 = 1 / 400 ns = 2.5 MHz。','n'],
+  ['週期','Period','一個完整波形重複一次所花的時間,T = 1/f。','例:2.5 MHz 訊號的週期 = 1 / 2.5 MHz = 400 ns。','n'],
+  ['觸發準位','Trigger Level','觸發比較的電壓門檻;訊號依設定的邊緣方向穿越它時對齊重畫,波形才會定住。','例:準位設在波形高低點中間最穩;拉出波形範圍就會失去觸發、畫面亂跑。','n'],
   ['混疊','Aliasing','取樣率不足時,高頻訊號被錯誤重建成不存在的低頻波。','例:用 1 GS/s 量 900 MHz 訊號,可能在螢幕上看到一條假的 100 MHz 波。','s'],
   ['負載效應','Loading','探棒接上電路時,本身的電容/電阻改變了被量的訊號。','例:高電容探棒接到快速邊緣上,會把邊緣「拖慢」,量到比真實更鈍的波形。','s'],
   ['眼圖','Eye Diagram','把大量位元疊在一個位元週期上,形成像眼睛的圖,用來看訊號品質。','例:DQ 對 DQS 做眼圖,眼睛張得開 = 時序與電壓裕度足。','s'],
