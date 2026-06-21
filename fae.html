@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FAE 技能養成 · Field Application Engineer Training</title>
+<style>
+  :root{
+    --paper:#eceff1; --surface:#ffffff; --surface2:#f6f8f9;
+    --ink:#15242c; --ink2:#2b3c44; --muted:#5d6e76; --faint:#8a979d;
+    --line:#d6dee1; --line2:#e6ecee;
+    --teal:#0d7d7d; --teal-d:#095e5e; --teal-tint:#e6f3f2;
+    --amber:#bf5f12; --amber-tint:#fbf0e2;
+    --violet:#5a4a90; --violet-tint:#efecf7;
+    --blue:#1c6ce0; --blue-tint:#e7f0fd;
+    --rose:#b0344a; --rose-tint:#fbe9ec;
+    --green:#0f7a4d; --green-tint:#e4f3eb;
+    --mono:ui-monospace,"SF Mono","JetBrains Mono",Consolas,"Roboto Mono",monospace;
+    --sans:"Segoe UI",system-ui,-apple-system,"Helvetica Neue",Arial,"PingFang TC","Microsoft JhengHei","Noto Sans TC",sans-serif;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--sans);line-height:1.7;font-size:16px;-webkit-font-smoothing:antialiased}
+  a{color:inherit}
+
+  .topbar{position:sticky;top:0;z-index:40;display:flex;align-items:center;gap:14px;flex-wrap:wrap;
+    background:rgba(255,255,255,.92);backdrop-filter:blur(10px);border-bottom:1px solid var(--line);padding:10px 18px}
+  .home{font-weight:600;font-size:13.5px;text-decoration:none;color:var(--muted);border:1px solid var(--line);border-radius:8px;padding:7px 12px;transition:.15s;white-space:nowrap}
+  .home:hover{color:#fff;background:var(--teal);border-color:var(--teal)}
+  .crumb{font-family:var(--mono);font-size:12.5px;color:var(--faint)}
+  .crumb b{color:var(--ink2)}
+  .spacer{flex:1}
+  .prog-wrap{display:flex;align-items:center;gap:10px;min-width:200px}
+  .prog-bar{position:relative;width:120px;height:7px;border-radius:5px;background:var(--line);overflow:hidden}
+  .prog-bar i{position:absolute;left:0;top:0;bottom:0;width:0;background:linear-gradient(90deg,var(--teal),var(--green));transition:width .3s}
+  .prog-txt{font-family:var(--mono);font-size:12px;color:var(--muted);white-space:nowrap}
+  .reset{font-family:var(--sans);font-size:12px;color:var(--faint);background:none;border:none;cursor:pointer;text-decoration:underline}
+
+  .wrap{max-width:1080px;margin:0 auto;padding:0 22px 100px}
+  header.hero{padding:48px 0 30px}
+  .eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--teal);display:flex;align-items:center;gap:10px;margin-bottom:12px}
+  .eyebrow::before{content:"";width:28px;height:1px;background:var(--teal)}
+  h1{font-size:clamp(28px,5vw,40px);margin:0 0 12px;letter-spacing:-.01em}
+  .lead{font-size:17px;color:var(--muted);max-width:760px}
+  .note{margin-top:16px;background:var(--teal-tint);border:1px solid #cfe7e2;border-radius:12px;padding:12px 16px;font-size:14px;color:var(--ink2)}
+  .note b{color:var(--teal-d)}
+
+  .cat{margin-top:30px;background:var(--surface);border:1px solid var(--line);border-radius:16px;overflow:hidden}
+  .cat-head{display:flex;align-items:center;gap:13px;padding:16px 20px;border-bottom:1px solid var(--line2);background:var(--surface2)}
+  .cat-ic{width:38px;height:38px;flex:0 0 38px;border-radius:10px;display:grid;place-items:center;font-size:19px;background:var(--accent-tint)}
+  .cat-head h2{font-size:18px;margin:0}
+  .cat-head .en{font-family:var(--mono);font-size:11.5px;color:var(--faint);margin-top:1px}
+  .cat-head .cnt{margin-left:auto;font-family:var(--mono);font-size:12px;color:var(--muted);background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:3px 11px}
+
+  .item{display:flex;align-items:flex-start;gap:13px;padding:13px 20px;border-bottom:1px dashed var(--line2);cursor:pointer;transition:background .12s}
+  .item:last-child{border-bottom:none}
+  .item:hover{background:var(--surface2)}
+  .item input{appearance:none;-webkit-appearance:none;width:20px;height:20px;flex:0 0 20px;margin-top:1px;border:2px solid var(--line);border-radius:6px;cursor:pointer;position:relative;transition:.15s}
+  .item input:checked{background:var(--accent);border-color:var(--accent)}
+  .item input:checked::after{content:"✓";position:absolute;inset:0;display:grid;place-items:center;color:#fff;font-size:13px;font-weight:700}
+  .item .t{font-size:15px;color:var(--ink)}
+  .item input:checked ~ .t{color:var(--faint);text-decoration:line-through}
+  .item .t .tag{display:inline-block;margin-left:8px;font-family:var(--mono);font-size:10px;letter-spacing:.5px;color:var(--accent);border:1px solid var(--accent);border-radius:5px;padding:0 6px;vertical-align:middle;text-decoration:none}
+
+  .foot{margin-top:40px;text-align:center;font-family:var(--mono);font-size:12px;color:var(--faint)}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <a class="home" href="index.html">← 回到入口</a>
+  <span class="crumb">Engineering Academy / <b>FAE 技能養成</b></span>
+  <span class="spacer"></span>
+  <div class="prog-wrap">
+    <div class="prog-bar"><i id="progFill"></i></div>
+    <span class="prog-txt" id="progTxt">0 / 0</span>
+    <button class="reset" id="resetBtn">重置</button>
+  </div>
+</div>
+
+<div class="wrap">
+  <header class="hero">
+    <p class="eyebrow">Field Application Engineer · Training Roadmap</p>
+    <h1>FAE 技能養成清單</h1>
+    <p class="lead">Flash / SSD 控制器 FAE 從新人到能獨立支援客戶的完整養成路徑。分六大領域、共 37 個主題;勾選追蹤自己的進度(會自動記在本機瀏覽器)。</p>
+    <div class="note">📌 <b>標 <span style="font-family:var(--mono)">詳解</span> 的項目</b>附有深入說明與圖示。其餘項目會陸續補上 —— 告訴我你想先看哪幾項,我就先把那幾項做成詳解。</div>
+  </header>
+
+  <!-- CAT 1 -->
+  <section class="cat" style="--accent:var(--teal);--accent-tint:var(--teal-tint)">
+    <div class="cat-head">
+      <div class="cat-ic">🧪</div>
+      <div><h2>基礎・實驗室・量產概念</h2><div class="en">Foundations · Lab · Mass Production</div></div>
+      <span class="cnt" data-cnt>0/5</span>
+    </div>
+    <label class="item"><input type="checkbox" data-id="c1-1"><span class="t">環境實驗室教育訓練(E-learning)</span></label>
+    <label class="item"><input type="checkbox" data-id="c1-2"><span class="t">Lab 區域與儀器介紹</span></label>
+    <label class="item"><input type="checkbox" data-id="c1-3"><span class="t">ESD / EMI、Test / Chamber、AIP、相容性、高速 IO 等介紹</span></label>
+    <label class="item"><input type="checkbox" data-id="c1-4"><span class="t">MP Flow(E-learning)</span></label>
+    <label class="item"><input type="checkbox" data-id="c1-5"><span class="t">Mass Production User Guide</span></label>
+  </section>
+
+  <!-- CAT 2 -->
+  <section class="cat" style="--accent:var(--blue);--accent-tint:var(--blue-tint)">
+    <div class="cat-head">
+      <div class="cat-ic">📑</div>
+      <div><h2>規格 SPEC(Flash / Host)</h2><div class="en">Flash &amp; Host Specifications</div></div>
+      <span class="cnt" data-cnt>0/8</span>
+    </div>
+    <label class="item"><input type="checkbox" data-id="c2-1"><span class="t">Flash SPEC(KIC, Micron, YMTC, Hynix …etc)介紹</span></label>
+    <label class="item"><input type="checkbox" data-id="c2-2"><span class="t">Flash(自包)/ CTL Package Type 介紹</span></label>
+    <label class="item"><input type="checkbox" data-id="c2-3"><span class="t">Host SPEC(SDA, eMMC / UFS)介紹 -1</span></label>
+    <label class="item"><input type="checkbox" data-id="c2-4"><span class="t">Host SPEC(SDA, eMMC / UFS)介紹 -2</span></label>
+    <label class="item"><input type="checkbox" data-id="c2-5"><span class="t">Host SPEC(SDA, eMMC / UFS)介紹 -3</span></label>
+    <label class="item"><input type="checkbox" data-id="c2-6"><span class="t">SPEC(Flash and Host)Study</span></label>
+    <label class="item"><input type="checkbox" data-id="c2-7"><span class="t">EV List 介紹與說明</span></label>
+    <label class="item"><input type="checkbox" data-id="c2-8"><span class="t">Project Kick off、MP、EOL 介紹與說明</span></label>
+  </section>
+
+  <!-- CAT 3 -->
+  <section class="cat" style="--accent:var(--violet);--accent-tint:var(--violet-tint)">
+    <div class="cat-head">
+      <div class="cat-ic">🧠</div>
+      <div><h2>控制器 Controller・開卡</h2><div class="en">Controller Architecture &amp; Bring-up</div></div>
+      <span class="cnt" data-cnt>0/7</span>
+    </div>
+    <label class="item"><input type="checkbox" data-id="c3-1"><span class="t">CTL Architecture(Regulator, VDT, OSC …etc.)介紹</span></label>
+    <label class="item"><input type="checkbox" data-id="c3-2"><span class="t">CTL Power Domain 介紹</span></label>
+    <label class="item"><input type="checkbox" data-id="c3-3"><span class="t">HW Setting 介紹</span></label>
+    <label class="item"><input type="checkbox" data-id="c3-4"><span class="t">FLASH Setting 介紹</span></label>
+    <label class="item"><input type="checkbox" data-id="c3-5"><span class="t">Vendor CMD 介紹</span></label>
+    <label class="item"><input type="checkbox" data-id="c3-6"><span class="t">Development tool 操作與說明</span></label>
+    <label class="item"><input type="checkbox" data-id="c3-7"><span class="t">Tester 開卡與運用</span></label>
+  </section>
+
+  <!-- CAT 4 -->
+  <section class="cat" style="--accent:var(--amber);--accent-tint:var(--amber-tint)">
+    <div class="cat-head">
+      <div class="cat-ic">📟</div>
+      <div><h2>量測與工具 Instruments</h2><div class="en">Measurement &amp; Analysis Tools</div></div>
+      <span class="cnt" data-cnt>0/7</span>
+    </div>
+    <label class="item"><input type="checkbox" data-id="c4-1"><span class="t">LA(Logic Analyzer)介紹與使用</span></label>
+    <label class="item"><input type="checkbox" data-id="c4-2"><span class="t">Protocol Analyzer(Solid Gear / Acute …etc)介紹與使用</span></label>
+    <label class="item"><input type="checkbox" data-id="c4-3"><span class="t">Data Logger 介紹與使用</span></label>
+    <label class="item"><input type="checkbox" data-id="c4-4"><span class="t">Host Timing(SD, SD Express, eMMC, UFS …etc)介紹與實作</span></label>
+    <label class="item"><input type="checkbox" data-id="c4-5"><span class="t">Flash Timing / LA Parsing 介紹與實作</span></label>
+    <label class="item"><input type="checkbox" data-id="c4-6"><span class="t">Thermal Throttling 說明與介紹</span></label>
+    <label class="item"><input type="checkbox" data-id="c4-7"><span class="t">Power Consumption 說明與介紹</span></label>
+  </section>
+
+  <!-- CAT 5 -->
+  <section class="cat" style="--accent:var(--green);--accent-tint:var(--green-tint)">
+    <div class="cat-head">
+      <div class="cat-ic">🔧</div>
+      <div><h2>硬體・Layout・板卡</h2><div class="en">Hardware · Layout · Board</div></div>
+      <span class="cnt" data-cnt>0/5</span>
+    </div>
+    <label class="item"><input type="checkbox" data-id="c5-1"><span class="t">OrCAD Layout Tools(Installation / Library / DRC / BOM / Net List)介紹</span></label>
+    <label class="item"><input type="checkbox" data-id="c5-2"><span class="t">SBT Design and Layout Rule 介紹</span></label>
+    <label class="item"><input type="checkbox" data-id="c5-3"><span class="t">EVB、測板介紹</span></label>
+    <label class="item"><input type="checkbox" data-id="c5-4"><span class="t">Schematic check list</span></label>
+    <label class="item"><input type="checkbox" data-id="c5-5"><span class="t">Platform、相容性 相關驗證介紹</span></label>
+  </section>
+
+  <!-- CAT 6 -->
+  <section class="cat" style="--accent:var(--rose);--accent-tint:var(--rose-tint)">
+    <div class="cat-head">
+      <div class="cat-ic">🔬</div>
+      <div><h2>FA・RMA・量產驗證</h2><div class="en">Failure Analysis · RMA · Production</div></div>
+      <span class="cnt" data-cnt>0/5</span>
+    </div>
+    <label class="item"><input type="checkbox" data-id="c6-1"><span class="t">FA Flow(外觀檢驗 / 電性檢驗 / SOP …etc)介紹</span></label>
+    <label class="item"><input type="checkbox" data-id="c6-2"><span class="t">RMA 淺談(Socket Board / OM / X-Ray / SAT / Decap …etc)</span></label>
+    <label class="item"><input type="checkbox" data-id="c6-3"><span class="t">產品驗證及測試儀器清單介紹</span></label>
+    <label class="item"><input type="checkbox" data-id="c6-4"><span class="t">Factory 生產流程(研磨、die sorting、WB、molding …);測試流程(MST、AFT …)</span></label>
+    <label class="item"><input type="checkbox" data-id="c6-5"><span class="t">Study Presentation</span></label>
+  </section>
+
+  <div class="foot">繁體中文 · 進度儲存在本機瀏覽器(localStorage)· 換裝置不同步</div>
+</div>
+
+<script>
+(function(){
+  const KEY='fae-progress-v1';
+  const boxes=[...document.querySelectorAll('.item input[type=checkbox]')];
+  const fill=document.getElementById('progFill'), txt=document.getElementById('progTxt');
+  let saved={};
+  try{saved=JSON.parse(localStorage.getItem(KEY)||'{}')||{};}catch(_){saved={};}
+  function save(){const o={};boxes.forEach(b=>{if(b.checked)o[b.dataset.id]=1;});try{localStorage.setItem(KEY,JSON.stringify(o));}catch(_){}}
+  function update(){
+    const done=boxes.filter(b=>b.checked).length, total=boxes.length;
+    fill.style.width=(total?done/total*100:0).toFixed(1)+'%';
+    txt.textContent=done+' / '+total+'  ('+(total?Math.round(done/total*100):0)+'%)';
+    document.querySelectorAll('.cat').forEach(cat=>{
+      const bs=[...cat.querySelectorAll('input[type=checkbox]')];
+      const d=bs.filter(b=>b.checked).length;
+      const c=cat.querySelector('[data-cnt]'); if(c)c.textContent=d+'/'+bs.length;
+    });
+  }
+  boxes.forEach(b=>{
+    if(saved[b.dataset.id])b.checked=true;
+    b.addEventListener('change',()=>{save();update();});
+  });
+  document.getElementById('resetBtn').addEventListener('click',()=>{
+    if(!confirm('確定要清除所有勾選進度嗎?'))return;
+    boxes.forEach(b=>b.checked=false);save();update();
+  });
+  update();
+})();
+</script>
+</body>
+</html>

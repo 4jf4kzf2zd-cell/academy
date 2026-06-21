@@ -8,6 +8,7 @@
 | `scope.html` | 示波器操作原理(泰克 × Keysight,Flash / SSD 量測導向) |
 | `flash_interface.html` | FLH Device Engineering 養成手冊(介面 / 操作面,新人 → Senior) |
 | `flash_device.html` | NAND Flash 元件養成手冊(元件物理面,新人 → Senior) |
+| `fae.html` | FAE 技能養成清單(Flash/SSD 控制器 FAE 訓練路徑,37 項可勾選追蹤) |
 
 兩個子頁左上 / 導覽列都有「← 回到入口」按鈕。
 
