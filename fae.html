@@ -62,6 +62,30 @@
   .item input:checked ~ .t{color:var(--faint);text-decoration:line-through}
   .item .t .tag{display:inline-block;margin-left:8px;font-family:var(--mono);font-size:10px;letter-spacing:.5px;color:var(--accent);border:1px solid var(--accent);border-radius:5px;padding:0 6px;vertical-align:middle;text-decoration:none}
 
+  /* expandable detailed item */
+  .item.itemx{display:flex;align-items:flex-start;gap:13px;padding:0;cursor:default}
+  .item.itemx:hover{background:none}
+  .itemx>input{margin:15px 0 0 20px}
+  .itemx .ibody{flex:1;min-width:0}
+  .ihead{display:flex;align-items:center;gap:9px;width:100%;text-align:left;background:none;border:none;cursor:pointer;padding:13px 20px 13px 0;font:inherit;color:var(--ink)}
+  .ihead:hover{background:var(--surface2)}
+  .ihead .t{font-size:15px}
+  .ihead .tag{font-family:var(--mono);font-size:10px;letter-spacing:.5px;color:var(--accent);border:1px solid var(--accent);border-radius:5px;padding:0 6px}
+  .ihead .chev{margin-left:auto;color:var(--faint);transition:transform .2s;flex:0 0 auto}
+  .itemx.open .chev{transform:rotate(90deg);color:var(--accent)}
+  .itemx>input:checked~.ibody .ihead .t{color:var(--faint);text-decoration:line-through}
+  .detail{display:none;padding:2px 20px 22px 0;color:var(--ink2);font-size:14.5px}
+  .itemx.open .detail{display:block}
+  .detail p{margin:8px 0}
+  .detail h4{margin:16px 0 2px;font-size:14px;color:var(--ink)}
+  .detail ul{margin:8px 0;padding-left:20px}
+  .detail li{margin:3px 0}
+  .detail .k{font-family:var(--mono);font-size:.88em;background:var(--surface);border:1px solid var(--line);border-radius:5px;padding:1px 5px}
+  .detail b{color:var(--accent-d,var(--ink))}
+  .detail figure{margin:14px 0 6px;background:#fbfcfd;border:1px solid var(--line);border-radius:12px;padding:14px}
+  .detail figure svg{display:block;width:100%;height:auto}
+  .detail figcaption{font-size:12.5px;color:var(--muted);margin-top:9px;line-height:1.55}
+
   .foot{margin-top:40px;text-align:center;font-family:var(--mono);font-size:12px;color:var(--faint)}
 </style>
 </head>
@@ -124,8 +148,88 @@
       <div><h2>控制器 Controller・開卡</h2><div class="en">Controller Architecture &amp; Bring-up</div></div>
       <span class="cnt" data-cnt>0/7</span>
     </div>
-    <label class="item"><input type="checkbox" data-id="c3-1"><span class="t">CTL Architecture(Regulator, VDT, OSC …etc.)介紹</span></label>
-    <label class="item"><input type="checkbox" data-id="c3-2"><span class="t">CTL Power Domain 介紹</span></label>
+    <div class="item itemx"><input type="checkbox" data-id="c3-1" aria-label="完成">
+      <div class="ibody">
+        <button class="ihead" aria-expanded="false"><span class="t">CTL Architecture(Regulator, VDT, OSC …etc.)介紹</span><span class="tag">詳解</span><span class="chev">▶</span></button>
+        <div class="detail">
+          <p>控制器(controller)是 SSD / 記憶卡的大腦。FAE 要先有一張「資料怎麼從 Host 流到 NAND」的方塊圖,才看得懂後面所有 debug。</p>
+          <figure>
+            <svg viewBox="0 0 700 280" role="img" aria-label="控制器架構方塊圖">
+              <defs><marker id="ar31" markerWidth="9" markerHeight="9" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#7a72b0"/></marker></defs>
+              <g font-family="ui-monospace,monospace" font-size="11.5" fill="#15242c" text-anchor="middle">
+                <rect x="8" y="50" width="78" height="46" rx="8" fill="#f0eefb" stroke="#5a4a90" stroke-width="1.4"/><text x="47" y="71">Host</text><text x="47" y="86" font-size="9.5" fill="#5d6e76">SD/eMMC/UFS</text>
+                <rect x="112" y="50" width="104" height="46" rx="8" fill="#fff" stroke="#5a4a90" stroke-width="1.4"/><text x="164" y="71">Host I/F</text><text x="164" y="86" font-size="9.5" fill="#5d6e76">前端 HIL</text>
+                <rect x="242" y="50" width="116" height="46" rx="8" fill="#fff" stroke="#5a4a90" stroke-width="2"/><text x="300" y="71">CPU + FTL</text><text x="300" y="86" font-size="9.5" fill="#5d6e76">韌體 · L2P 映射</text>
+                <rect x="384" y="50" width="104" height="46" rx="8" fill="#fff" stroke="#5a4a90" stroke-width="1.4"/><text x="436" y="71">Flash I/F</text><text x="436" y="86" font-size="9.5" fill="#5d6e76">NAND 控制</text>
+                <rect x="514" y="50" width="84" height="46" rx="8" fill="#f0eefb" stroke="#5a4a90" stroke-width="1.4"/><text x="556" y="71">NAND</text><text x="556" y="86" font-size="9.5" fill="#5d6e76">×N ch</text>
+                <line x1="86" y1="73" x2="110" y2="73" stroke="#7a72b0" stroke-width="1.6" marker-end="url(#ar31)"/>
+                <line x1="216" y1="73" x2="240" y2="73" stroke="#7a72b0" stroke-width="1.6" marker-end="url(#ar31)"/>
+                <line x1="358" y1="73" x2="382" y2="73" stroke="#7a72b0" stroke-width="1.6" marker-end="url(#ar31)"/>
+                <line x1="488" y1="73" x2="512" y2="73" stroke="#7a72b0" stroke-width="1.6" marker-end="url(#ar31)"/>
+                <rect x="242" y="120" width="116" height="38" rx="8" fill="#fff" stroke="#0d7d7d" stroke-width="1.3"/><text x="300" y="143" fill="#0d7d7d">SRAM / DRAM</text>
+                <rect x="384" y="120" width="104" height="38" rx="8" fill="#fff" stroke="#0d7d7d" stroke-width="1.3"/><text x="436" y="143" fill="#0d7d7d">ECC / LDPC</text>
+                <line x1="300" y1="96" x2="300" y2="119" stroke="#9aa2ac" stroke-width="1.2" stroke-dasharray="3 3"/>
+                <line x1="436" y1="96" x2="436" y2="119" stroke="#9aa2ac" stroke-width="1.2" stroke-dasharray="3 3"/>
+                <text x="352" y="198" font-size="10" fill="#8a979d" letter-spacing="1">INFRASTRUCTURE · 供電 / 時脈 / 監測</text>
+                <rect x="120" y="212" width="130" height="40" rx="8" fill="#fef6ec" stroke="#bf5f12" stroke-width="1.3"/><text x="185" y="236" fill="#bf5f12">PMU / Regulator</text>
+                <rect x="266" y="212" width="120" height="40" rx="8" fill="#fef6ec" stroke="#bf5f12" stroke-width="1.3"/><text x="326" y="230" fill="#bf5f12">OSC / PLL</text><text x="326" y="244" font-size="9" fill="#8f470c">系統時脈</text>
+                <rect x="402" y="212" width="120" height="40" rx="8" fill="#fef6ec" stroke="#bf5f12" stroke-width="1.3"/><text x="462" y="230" fill="#bf5f12">VDT / POR</text><text x="462" y="244" font-size="9" fill="#8f470c">電壓偵測</text>
+                <line x1="326" y1="212" x2="326" y2="161" stroke="#d6b48a" stroke-width="1.2" stroke-dasharray="3 3" marker-end="url(#ar31)"/>
+              </g>
+            </svg>
+            <figcaption>資料路徑:Host → 前端 Host I/F(HIL)→ CPU/FTL(韌體做 L2P 映射、GC、wear-leveling)→ Flash I/F → NAND;旁路有 <b>SRAM/DRAM</b> 緩衝與 <b>ECC/LDPC</b> 糾錯。底層 <b>PMU/Regulator</b>(供電)、<b>OSC/PLL</b>(時脈)、<b>VDT/POR</b>(電壓偵測/上電重置)是整顆晶片的基礎設施。</figcaption>
+          </figure>
+          <h4>FAE 要掌握的重點</h4>
+          <ul>
+            <li><b>資料路徑 vs 控制路徑</b>:讀寫資料走 ECC/buffer,命令/設定走 CPU/暫存器。出問題先判斷是哪條路。</li>
+            <li><b>FTL</b>:邏輯→實體位址映射、garbage collection、wear-leveling —— 效能與壽命都在這。</li>
+            <li><b>ECC/LDPC</b>:NAND 一定有 bit error,靠 LDPC 糾正;RBER 太高會掉到 read-retry / 解碼失敗。</li>
+            <li><b>多通道 / 多 CE</b>:並行存取多顆 die 才有高頻寬(見 interleave)。</li>
+            <li><span class="k">Regulator</span>、<span class="k">OSC</span>、<span class="k">VDT</span> 屬基礎設施,下一項「Power Domain」會細談。</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="item itemx"><input type="checkbox" data-id="c3-2" aria-label="完成">
+      <div class="ibody">
+        <button class="ihead" aria-expanded="false"><span class="t">CTL Power Domain 介紹</span><span class="tag">詳解</span><span class="chev">▶</span></button>
+        <div class="detail">
+          <p>控制器內不同區塊用<b>不同電壓、可獨立開關</b>的「電源域(power domain)」。外部電源經內部 Regulator 降出各域電壓;省電時可關掉用不到的域。FAE debug 掉電、開不了機、耗電異常,都要先看這張圖。</p>
+          <figure>
+            <svg viewBox="0 0 700 250" role="img" aria-label="控制器電源域圖">
+              <defs><marker id="ar32" markerWidth="9" markerHeight="9" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#c98a3a"/></marker></defs>
+              <g font-family="ui-monospace,monospace" font-size="11" fill="#15242c" text-anchor="middle">
+                <text x="54" y="26" font-size="10" fill="#8a979d">外部輸入</text>
+                <rect x="8" y="36" width="92" height="38" rx="7" fill="#fbf0e2" stroke="#bf5f12" stroke-width="1.3"/><text x="54" y="59">VCC 3.3V</text>
+                <rect x="8" y="92" width="92" height="38" rx="7" fill="#fbf0e2" stroke="#bf5f12" stroke-width="1.3"/><text x="54" y="115">VCCQ 1.8V</text>
+                <rect x="150" y="34" width="140" height="100" rx="9" fill="#fff" stroke="#bf5f12" stroke-width="2"/><text x="220" y="78">內部 Regulator</text><text x="220" y="95" font-size="9.5" fill="#5d6e76">LDO / DC-DC / Pump</text>
+                <line x1="100" y1="55" x2="148" y2="66" stroke="#c98a3a" stroke-width="1.5" marker-end="url(#ar32)"/>
+                <line x1="100" y1="111" x2="148" y2="100" stroke="#c98a3a" stroke-width="1.5" marker-end="url(#ar32)"/>
+                <text x="450" y="26" font-size="10" fill="#8a979d">內部電源域</text>
+                <rect x="360" y="34" width="180" height="30" rx="7" fill="#e6f3f2" stroke="#0d7d7d" stroke-width="1.3"/><text x="450" y="54" fill="#0d7d7d">Core 0.8–1.0V · 數位邏輯</text>
+                <rect x="360" y="70" width="180" height="30" rx="7" fill="#e6f3f2" stroke="#0d7d7d" stroke-width="1.3"/><text x="450" y="90" fill="#0d7d7d">IO / VCCQ 1.8V · 介面</text>
+                <rect x="360" y="106" width="180" height="30" rx="7" fill="#e6f3f2" stroke="#0d7d7d" stroke-width="1.3"/><text x="450" y="126" fill="#0d7d7d">NAND VccQ / VDDF</text>
+                <line x1="290" y1="60" x2="358" y2="49" stroke="#c98a3a" stroke-width="1.5" marker-end="url(#ar32)"/>
+                <line x1="290" y1="84" x2="358" y2="85" stroke="#c98a3a" stroke-width="1.5" marker-end="url(#ar32)"/>
+                <line x1="290" y1="108" x2="358" y2="121" stroke="#c98a3a" stroke-width="1.5" marker-end="url(#ar32)"/>
+                <rect x="150" y="170" width="200" height="48" rx="9" fill="#fbe9ec" stroke="#b03426" stroke-width="1.4"/><text x="250" y="190" fill="#b03426">VDT / POR 電壓偵測</text><text x="250" y="207" font-size="9.5" fill="#8f2a20">低於門檻 → 觸發 reset 保護資料</text>
+                <line x1="54" y1="130" x2="54" y2="194" stroke="#cf7d8a" stroke-width="1.2" stroke-dasharray="3 3"/><line x1="54" y1="194" x2="148" y2="194" stroke="#cf7d8a" stroke-width="1.2" stroke-dasharray="3 3" marker-end="url(#ar32)"/>
+                <text x="490" y="178" font-size="10" fill="#8a979d" text-anchor="start">上電順序(sequencing):</text>
+                <text x="490" y="196" font-size="10.5" fill="#15242c" text-anchor="start">VCC → VCCQ → Core</text>
+                <text x="490" y="212" font-size="9.5" fill="#8a979d" text-anchor="start">下電反向;順序錯會 latch-up</text>
+              </g>
+            </svg>
+            <figcaption>外部 <b>VCC / VCCQ</b> 經內部 Regulator 降壓,產生 Core(邏輯)、IO、NAND 等獨立電源域。<b>VDT / POR</b> 持續監測電壓,掉到門檻以下立刻 reset 保護(避免寫一半斷電毀資料)。<b>上電 / 下電順序</b>必須遵守規格,否則可能 latch-up 或開不了機。</figcaption>
+          </figure>
+          <h4>FAE 常見應用</h4>
+          <ul>
+            <li>量產卡<b>開不了機</b>:先量各域電壓有沒有正常建立、順序對不對。</li>
+            <li><b>掉電保護</b>(power loss):VDT 觸發後韌體要在電容撐住的時間內把關鍵 metadata 寫回。</li>
+            <li><b>省電</b>:idle/sleep 時關閉不用的域,與下面「Power Consumption」直接相關。</li>
+          </ul>
+        </div>
+      </div>
+    </div>
     <label class="item"><input type="checkbox" data-id="c3-3"><span class="t">HW Setting 介紹</span></label>
     <label class="item"><input type="checkbox" data-id="c3-4"><span class="t">FLASH Setting 介紹</span></label>
     <label class="item"><input type="checkbox" data-id="c3-5"><span class="t">Vendor CMD 介紹</span></label>
@@ -143,10 +247,151 @@
     <label class="item"><input type="checkbox" data-id="c4-1"><span class="t">LA(Logic Analyzer)介紹與使用</span></label>
     <label class="item"><input type="checkbox" data-id="c4-2"><span class="t">Protocol Analyzer(Solid Gear / Acute …etc)介紹與使用</span></label>
     <label class="item"><input type="checkbox" data-id="c4-3"><span class="t">Data Logger 介紹與使用</span></label>
-    <label class="item"><input type="checkbox" data-id="c4-4"><span class="t">Host Timing(SD, SD Express, eMMC, UFS …etc)介紹與實作</span></label>
-    <label class="item"><input type="checkbox" data-id="c4-5"><span class="t">Flash Timing / LA Parsing 介紹與實作</span></label>
-    <label class="item"><input type="checkbox" data-id="c4-6"><span class="t">Thermal Throttling 說明與介紹</span></label>
-    <label class="item"><input type="checkbox" data-id="c4-7"><span class="t">Power Consumption 說明與介紹</span></label>
+    <div class="item itemx"><input type="checkbox" data-id="c4-4" aria-label="完成">
+      <div class="ibody">
+        <button class="ihead" aria-expanded="false"><span class="t">Host Timing(SD, SD Express, eMMC, UFS …etc)介紹與實作</span><span class="tag">詳解</span><span class="chev">▶</span></button>
+        <div class="detail">
+          <p>主機介面靠<b>時脈(CLK)對齊命令/資料</b>。資料必須在時脈取樣邊緣<b>前</b>穩定一段(建立 <span class="k">tSU</span>)、<b>後</b>維持一段(保持 <span class="k">tH</span>),取樣才正確。FAE 用 LA / Protocol Analyzer + 示波器量這段 margin。</p>
+          <figure>
+            <svg viewBox="0 0 700 220" role="img" aria-label="Host 介面時序圖">
+              <g font-family="ui-monospace,monospace" font-size="11" fill="#15242c">
+                <text x="8" y="62" fill="#1c6ce0" font-weight="700">CLK</text>
+                <text x="8" y="148" fill="#15242c" font-weight="700">DATA</text>
+                <path d="M60,78 L60,46 L120,46 L120,78 L180,78 L180,46 L240,46 L240,78 L300,78 L300,46 L360,46 L360,78 L420,78 L420,46 L480,46 L480,78 L540,78 L540,46 L600,46" fill="none" stroke="#1c6ce0" stroke-width="2"/>
+                <path d="M60,128 L150,128 L165,160 L435,160 L450,128 L600,128" fill="none" stroke="#15242c" stroke-width="2"/>
+                <line x1="300" y1="38" x2="300" y2="178" stroke="#b03426" stroke-width="1.3" stroke-dasharray="5 4"/>
+                <circle cx="300" cy="46" r="4" fill="#b03426"/>
+                <text x="300" y="32" text-anchor="middle" font-size="9.5" fill="#b03426">取樣邊緣 ↑</text>
+                <line x1="255" y1="160" x2="255" y2="195" stroke="#8a979d" stroke-width="1" stroke-dasharray="3 3"/>
+                <line x1="345" y1="160" x2="345" y2="195" stroke="#8a979d" stroke-width="1" stroke-dasharray="3 3"/>
+                <line x1="255" y1="190" x2="300" y2="190" stroke="#0d7d7d" stroke-width="1.4" marker-start="url(#barL)" marker-end="url(#barR)"/>
+                <line x1="300" y1="190" x2="345" y2="190" stroke="#bf5f12" stroke-width="1.4" marker-start="url(#barL)" marker-end="url(#barR)"/>
+                <text x="277" y="208" text-anchor="middle" font-size="10" fill="#0d7d7d">tSU 建立</text>
+                <text x="323" y="208" text-anchor="middle" font-size="10" fill="#bf5f12">tH 保持</text>
+                <text x="345" y="150" font-size="9.5" fill="#5d6e76">資料須在此窗內穩定</text>
+                <defs>
+                  <marker id="barL" markerWidth="6" markerHeight="10" refX="3" refY="5" orient="auto"><line x1="3" y1="1" x2="3" y2="9" stroke="#555" stroke-width="1.4"/></marker>
+                  <marker id="barR" markerWidth="6" markerHeight="10" refX="3" refY="5" orient="auto"><line x1="3" y1="1" x2="3" y2="9" stroke="#555" stroke-width="1.4"/></marker>
+                </defs>
+              </g>
+            </svg>
+            <figcaption>時脈上升邊緣取樣;資料在 <b>tSU(建立)+ tH(保持)</b>這段窗內必須穩定,否則取到錯值。高速模式(eMMC HS400 用 DQS、SD Express / UFS 走 PCIe/M-PHY 差動多 Gear)margin 更小,更需實測。</figcaption>
+          </figure>
+          <h4>FAE 實作</h4>
+          <ul>
+            <li>用 <b>Protocol Analyzer</b> 解命令層(CMD/RESP/UPIU),用<b>示波器 / LA</b> 看實體層 timing 與眼圖。</li>
+            <li>量 <b>tSU/tH margin</b>、看是否需要調 host 端 driving strength / delay line(timing training)。</li>
+            <li>對照各介面 SPEC(SD、eMMC、UFS)的 timing 表逐項驗證。</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="item itemx"><input type="checkbox" data-id="c4-5" aria-label="完成">
+      <div class="ibody">
+        <button class="ihead" aria-expanded="false"><span class="t">Flash Timing / LA Parsing 介紹與實作</span><span class="tag">詳解</span><span class="chev">▶</span></button>
+        <div class="detail">
+          <p>NAND 介面用一組控制訊號把匯流排上的 byte 分成<b>命令 / 位址 / 資料</b>三種相位。LA(邏輯分析儀)抓下這些訊號後,FAE 要會「parsing」—— 把波形翻譯回 <span class="k">命令序列</span>,才能定位讀寫錯誤。</p>
+          <figure>
+            <svg viewBox="0 0 700 250" role="img" aria-label="NAND Flash 介面命令時序">
+              <g font-family="ui-monospace,monospace" font-size="10.5" fill="#15242c">
+                <text x="6" y="44" font-weight="700">CE#</text>
+                <path d="M40,30 L60,30 L60,46 L620,46 L620,30 L660,30" fill="none" stroke="#5d6e76" stroke-width="1.8"/>
+                <text x="6" y="84" font-weight="700" fill="#1c6ce0">CLE</text>
+                <path d="M40,90 L80,90 L80,72 L150,72 L150,90 L300,90 L300,72 L350,72 L350,90 L660,90" fill="none" stroke="#1c6ce0" stroke-width="1.7"/>
+                <text x="6" y="124" font-weight="700" fill="#5a4a90">ALE</text>
+                <path d="M40,130 L160,130 L160,112 L290,112 L290,130 L660,130" fill="none" stroke="#5a4a90" stroke-width="1.7"/>
+                <text x="6" y="164" font-weight="700" fill="#bf5f12">WE#</text>
+                <path d="M40,150 L75,150 L75,166 L95,166 L95,150 L120,150 L120,166 L140,166 L140,150 L175,150 L175,166 L195,166 L195,150 L225,150 L225,166 L245,166 L245,150 L275,150 L275,166 L295,166 L295,150 L320,150 L320,166 L340,166 L340,150 L660,150" fill="none" stroke="#bf5f12" stroke-width="1.5"/>
+                <text x="6" y="206" font-weight="700">DQ</text>
+                <g font-size="9.5" text-anchor="middle">
+                  <rect x="74" y="190" width="58" height="26" rx="5" fill="#e7f0fd" stroke="#1c6ce0"/><text x="103" y="207" fill="#1c6ce0">00h CMD</text>
+                  <rect x="150" y="190" width="140" height="26" rx="5" fill="#efecf7" stroke="#5a4a90"/><text x="220" y="207" fill="#5a4a90">Address × 5</text>
+                  <rect x="300" y="190" width="50" height="26" rx="5" fill="#e7f0fd" stroke="#1c6ce0"/><text x="325" y="207" fill="#1c6ce0">30h</text>
+                  <rect x="360" y="190" width="70" height="26" rx="5" fill="#fbf0e2" stroke="#bf5f12" stroke-dasharray="4 3"/><text x="395" y="207" fill="#bf5f12">tR busy</text>
+                  <rect x="440" y="190" width="180" height="26" rx="5" fill="#e4f3eb" stroke="#0f7a4d"/><text x="530" y="207" fill="#0f7a4d">Data out(RE# toggling)</text>
+                </g>
+                <text x="525" y="236" text-anchor="middle" font-size="9.5" fill="#5d6e76">高速 Toggle/ONFI:改用 DQS 閘控 DQ,每個 DQS 邊緣閂一筆(tDS/tDH)</text>
+              </g>
+            </svg>
+            <figcaption>讀取序列:<b>CLE</b> 高時 DQ 上是命令(<span class="k">00h</span>)、<b>ALE</b> 高時是位址、<b>WE#</b> 每個下降把 byte 閂入;<span class="k">30h</span> 後晶片進入 <b>tR</b> 忙碌,再由 <b>RE#</b> toggle 把資料讀出。LA Parsing 就是把這串波形還原成命令序列。</figcaption>
+          </figure>
+          <h4>FAE 實作</h4>
+          <ul>
+            <li>用 LA 設好各訊號,觸發在特定命令(如 erase 60h-D0h),抓出問題前後的完整序列。</li>
+            <li>對照 NAND datasheet 的 timing(tWP、tWC、tRC、tDS/tDH…)確認是否合規。</li>
+            <li>高速模式量 <b>DQ/DQS</b> 眼圖,連到示波器頁的眼圖 / 時序裕度觀念。</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="item itemx"><input type="checkbox" data-id="c4-6" aria-label="完成">
+      <div class="ibody">
+        <button class="ihead" aria-expanded="false"><span class="t">Thermal Throttling 說明與介紹</span><span class="tag">詳解</span><span class="chev">▶</span></button>
+        <div class="detail">
+          <p>持續高速讀寫會發熱。當溫度逼近上限,韌體會<b>主動降速</b>(降頻、限 IOPS)把溫度壓在安全門檻下 —— 這就是 thermal throttling。代價是<b>持續吞吐量掉下來</b>,表現為「先快後慢」。</p>
+          <figure>
+            <svg viewBox="0 0 700 230" role="img" aria-label="Thermal throttling 溫度與吞吐量曲線">
+              <g font-family="ui-monospace,monospace" font-size="10.5">
+                <line x1="60" y1="20" x2="60" y2="190" stroke="#15242c" stroke-width="1.2"/>
+                <line x1="60" y1="190" x2="650" y2="190" stroke="#15242c" stroke-width="1.2"/>
+                <text x="60" y="14" text-anchor="middle" fill="#0d7d7d">吞吐量 / 溫度</text>
+                <text x="640" y="210" text-anchor="end" fill="#5d6e76">時間 →</text>
+                <line x1="60" y1="70" x2="650" y2="70" stroke="#b03426" stroke-width="1.1" stroke-dasharray="6 4"/>
+                <text x="648" y="64" text-anchor="end" font-size="10" fill="#b03426">Tc 節流門檻 (Tjmax)</text>
+                <polyline points="60,172 120,150 180,121 240,93 300,75 340,78 380,72 420,80 460,74 500,80 540,73 580,80 620,75" fill="none" stroke="#b03426" stroke-width="2.2"/>
+                <text x="150" y="138" fill="#b03426" font-size="10">溫度上升</text>
+                <polyline points="60,50 305,50 312,108 360,95 370,119 420,99 430,121 480,101 490,121 540,103 550,121 600,105 624,112" fill="none" stroke="#0d7d7d" stroke-width="2.2"/>
+                <text x="150" y="44" fill="#0d7d7d" font-size="10">吞吐量(滿速)</text>
+                <line x1="306" y1="24" x2="306" y2="190" stroke="#8a979d" stroke-width="1" stroke-dasharray="4 4"/>
+                <text x="306" y="206" text-anchor="middle" font-size="9.5" fill="#8a979d">throttle 啟動</text>
+                <text x="470" y="86" font-size="9.5" fill="#0d7d7d">降速後溫度被壓在門檻附近</text>
+              </g>
+            </svg>
+            <figcaption>持續寫入時溫度爬升,碰到 <b>Tc 門檻</b>後韌體降速,吞吐量呈鋸齒狀掉落、溫度被壓在門檻附近震盪。量測重點:做<b>長時間 sequential write</b>,同時記錄溫度與吞吐曲線,看何時開始 throttle、穩態吞吐多少。</figcaption>
+          </figure>
+          <h4>FAE 重點</h4>
+          <ul>
+            <li>短時間 benchmark 看不到 —— 一定要<b>長時間 / 持續負載</b>才會觸發。</li>
+            <li>受散熱條件影響大:有無散熱片、機殼、環境溫度(配合 Chamber 測)。</li>
+            <li>與 <b>Power Consumption</b> 互為因果:功耗→發熱→throttle。</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="item itemx"><input type="checkbox" data-id="c4-7" aria-label="完成">
+      <div class="ibody">
+        <button class="ihead" aria-expanded="false"><span class="t">Power Consumption 說明與介紹</span><span class="tag">詳解</span><span class="chev">▶</span></button>
+        <div class="detail">
+          <p>各狀態的耗電都要量:idle、read、<b>program / erase 的電流尖峰</b>、以及 sleep 低功耗態。Host SPEC(eMMC/UFS/SD)對<b>平均電流與峰值</b>都有上限。FAE 用 Data Logger / 電源分析儀量 current vs time。</p>
+          <figure>
+            <svg viewBox="0 0 700 215" role="img" aria-label="耗電電流對時間波形">
+              <g font-family="ui-monospace,monospace" font-size="10.5">
+                <line x1="60" y1="20" x2="60" y2="188" stroke="#15242c" stroke-width="1.2"/>
+                <line x1="60" y1="188" x2="650" y2="188" stroke="#15242c" stroke-width="1.2"/>
+                <text x="58" y="14" text-anchor="middle" fill="#0f7a4d">電流 ICC (mA)</text>
+                <text x="642" y="206" text-anchor="end" fill="#5d6e76">時間 →</text>
+                <line x1="60" y1="128" x2="650" y2="128" stroke="#0f7a4d" stroke-width="1" stroke-dasharray="6 4"/>
+                <text x="648" y="123" text-anchor="end" font-size="9.5" fill="#0f7a4d">平均 ICC</text>
+                <polyline points="60,158 100,158 102,108 132,108 134,158 172,158 174,100 204,100 206,158 250,158 252,50 300,50 302,158 340,158 342,58 396,58 398,158 452,158 454,182 600,182 602,158 640,158" fill="none" stroke="#0f7a4d" stroke-width="2"/>
+                <text x="80" y="172" font-size="9" fill="#5d6e76">idle</text>
+                <text x="117" y="100" font-size="9" fill="#1c6ce0" text-anchor="middle">read</text>
+                <text x="276" y="44" font-size="9.5" fill="#b03426" text-anchor="middle">program 尖峰</text>
+                <text x="369" y="52" font-size="9.5" fill="#bf5f12" text-anchor="middle">erase 尖峰</text>
+                <text x="527" y="176" font-size="9" fill="#5a4a90" text-anchor="middle">sleep(低功耗)</text>
+                <line x1="252" y1="50" x2="252" y2="30" stroke="#b03426" stroke-width="1" stroke-dasharray="3 3"/><text x="252" y="26" text-anchor="middle" font-size="9" fill="#b03426">峰值 Ipeak</text>
+              </g>
+            </svg>
+            <figcaption>電流隨操作劇烈變化:idle 低、read 中等、<b>program / erase 出現大尖峰</b>、sleep 最低。要同時報告<b>平均功耗</b>(算電池續航)與<b>峰值電流</b>(確認供電/host 限流)。UFS 的 Hibern8、NVMe 的 PS state 都是壓低 idle 功耗的機制。</figcaption>
+          </figure>
+          <h4>FAE 量測要點</h4>
+          <ul>
+            <li>取樣率要夠高才抓得到 program/erase 的<b>瞬間尖峰</b>(否則被平均掉)。</li>
+            <li>分狀態量:active(R/W)、idle、sleep,各算平均 + 峰值。</li>
+            <li>對照 Host SPEC 的 <span class="k">ICC</span> 限制;超標會被客戶退。配合 Thermal 一起看。</li>
+          </ul>
+        </div>
+      </div>
+    </div>
   </section>
 
   <!-- CAT 5 -->
@@ -156,7 +401,41 @@
       <div><h2>硬體・Layout・板卡</h2><div class="en">Hardware · Layout · Board</div></div>
       <span class="cnt" data-cnt>0/5</span>
     </div>
-    <label class="item"><input type="checkbox" data-id="c5-1"><span class="t">OrCAD Layout Tools(Installation / Library / DRC / BOM / Net List)介紹</span></label>
+    <div class="item itemx"><input type="checkbox" data-id="c5-1" aria-label="完成">
+      <div class="ibody">
+        <button class="ihead" aria-expanded="false"><span class="t">OrCAD Layout Tools(Installation / Library / DRC / BOM / Net List)介紹</span><span class="tag">詳解</span><span class="chev">▶</span></button>
+        <div class="detail">
+          <p>OrCAD 是一整套 PCB 設計工具鏈。FAE 看板、改板、出料表都會用到。先記住這條<b>從畫電路圖到出工廠檔</b>的流程。</p>
+          <figure>
+            <svg viewBox="0 0 700 200" role="img" aria-label="OrCAD PCB 設計流程">
+              <defs><marker id="ar51" markerWidth="9" markerHeight="9" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#0f7a4d"/></marker></defs>
+              <g font-family="ui-monospace,monospace" font-size="11" fill="#15242c" text-anchor="middle">
+                <rect x="20" y="16" width="120" height="40" rx="8" fill="#e4f3eb" stroke="#0f7a4d" stroke-width="1.3"/><text x="80" y="36">Library 元件庫</text><text x="80" y="49" font-size="9" fill="#5d6e76">symbol / footprint</text>
+                <rect x="20" y="88" width="120" height="46" rx="8" fill="#fff" stroke="#0f7a4d" stroke-width="1.6"/><text x="80" y="108">Capture</text><text x="80" y="123" font-size="9.5" fill="#5d6e76">畫 Schematic</text>
+                <rect x="166" y="92" width="92" height="38" rx="8" fill="#fff" stroke="#0f7a4d" stroke-width="1.3"/><text x="212" y="112">Netlist</text><text x="212" y="124" font-size="9" fill="#5d6e76">連線表</text>
+                <rect x="284" y="88" width="120" height="46" rx="8" fill="#fff" stroke="#0f7a4d" stroke-width="1.6"/><text x="344" y="108">PCB Editor</text><text x="344" y="123" font-size="9.5" fill="#5d6e76">Layout / 佈線</text>
+                <rect x="430" y="92" width="84" height="38" rx="8" fill="#fff" stroke="#0f7a4d" stroke-width="1.3"/><text x="472" y="112">DRC</text><text x="472" y="124" font-size="9" fill="#5d6e76">規則檢查</text>
+                <rect x="540" y="88" width="138" height="46" rx="8" fill="#e4f3eb" stroke="#0f7a4d" stroke-width="1.3"/><text x="609" y="108">BOM + Gerber</text><text x="609" y="123" font-size="9" fill="#5d6e76">料表 / 工廠檔</text>
+                <line x1="80" y1="56" x2="80" y2="87" stroke="#0f7a4d" stroke-width="1.5" marker-end="url(#ar51)"/>
+                <line x1="140" y1="111" x2="165" y2="111" stroke="#0f7a4d" stroke-width="1.5" marker-end="url(#ar51)"/>
+                <line x1="258" y1="111" x2="283" y2="111" stroke="#0f7a4d" stroke-width="1.5" marker-end="url(#ar51)"/>
+                <line x1="404" y1="111" x2="429" y2="111" stroke="#0f7a4d" stroke-width="1.5" marker-end="url(#ar51)"/>
+                <line x1="514" y1="111" x2="539" y2="111" stroke="#0f7a4d" stroke-width="1.5" marker-end="url(#ar51)"/>
+                <path d="M472,130 L472,162 L344,162 L344,135" fill="none" stroke="#b03426" stroke-width="1.2" stroke-dasharray="4 3" marker-end="url(#ar51)"/>
+                <text x="408" y="176" font-size="9" fill="#b03426">DRC 不過 → 回去修</text>
+              </g>
+            </svg>
+            <figcaption>流程:<b>Capture</b> 用 <b>Library</b> 的元件畫 schematic → 產生 <b>Netlist</b> → <b>PCB Editor</b> 做 layout/佈線(遵守 layout rule)→ <b>DRC</b> 檢查 → 輸出 <b>BOM</b>(料表)與 <b>Gerber</b> 給工廠。DRC 沒過就回去改。</figcaption>
+          </figure>
+          <h4>FAE 會用到的</h4>
+          <ul>
+            <li><b>安裝 / 建 Library</b>:新元件要自己畫 symbol + footprint。</li>
+            <li>看 <b>Netlist</b> 對接線、查訊號走哪;改板時讀懂既有設計。</li>
+            <li>跑 <b>DRC</b>、出 <b>BOM</b> 給採購 / 工廠;搭配「Schematic check list」逐項檢查。</li>
+          </ul>
+        </div>
+      </div>
+    </div>
     <label class="item"><input type="checkbox" data-id="c5-2"><span class="t">SBT Design and Layout Rule 介紹</span></label>
     <label class="item"><input type="checkbox" data-id="c5-3"><span class="t">EVB、測板介紹</span></label>
     <label class="item"><input type="checkbox" data-id="c5-4"><span class="t">Schematic check list</span></label>
@@ -207,6 +486,9 @@
     boxes.forEach(b=>b.checked=false);save();update();
   });
   update();
+  document.querySelectorAll('.itemx .ihead').forEach(h=>{
+    h.addEventListener('click',()=>{const it=h.closest('.itemx');const o=it.classList.toggle('open');h.setAttribute('aria-expanded',o?'true':'false');});
+  });
 })();
 </script>
 </body>
