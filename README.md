@@ -1,16 +1,15 @@
-# 工程教學入口 · Engineering Academy
+# 示波器完全教學(獨立單頁版)· 泰克 × Keysight
 
-純靜態、零相依套件的互動式教學網站,可直接託管。結構是「**入口頁 + 三個子頁**」:
+> 這是 `scope-only` 分支:**只保留示波器教學**的獨立版本,`index.html` 就是教學頁本體,
+> 不含 FLH / Flash Device / FAE,也沒有「回到入口」按鈕。適合單獨分享一個乾淨網址。
+
+純靜態、零相依套件,可直接託管。
 
 | 檔案 | 內容 |
 |---|---|
-| `index.html` | 入口頁,三個選項:示波器操作原理 / FLH Interface / NAND Flash 元件養成 |
-| `scope.html` | 示波器操作原理(泰克 × Keysight,Flash / SSD 量測導向) |
-| `flash_interface.html` | FLH Device Engineering 養成手冊(介面 / 操作面,新人 → Senior) |
-| `flash_device.html` | NAND Flash 元件養成手冊(元件物理面,新人 → Senior) |
-| `fae.html` | FAE 技能養成清單(Flash/SSD 控制器 FAE 訓練路徑,37 項可勾選追蹤) |
+| `index.html` | 示波器完全教學(互動前面板、操作步驟、名詞示意圖、眼圖 / Shmoo…) |
 
-兩個子頁左上 / 導覽列都有「← 回到入口」按鈕。
+> 完整四合一版本(入口頁 + FLH / Flash / FAE)在 `main` 分支。
 
 ---
 
